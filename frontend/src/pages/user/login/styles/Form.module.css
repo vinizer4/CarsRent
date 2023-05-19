@@ -1,0 +1,47 @@
+.form{
+    padding: 250px;
+    width: 100vw;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: auto;
+    border-radius: 20px;
+}
+
+.container{
+    display: flex;
+    justify-content: center;
+}
+
+.input{
+    padding: 15px;
+    width: 25vw;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 1px 1px 7px rgb(209, 209, 209);
+}
+
+
+.formTitle{
+    color: rgb(61, 58, 58);
+}
+
+.submitButton{
+padding: 15px;
+width: 200px;
+margin-top: 20px;
+
+background: rgb(61, 58, 58);
+border: none;
+border-radius: 10px; 
+cursor: pointer;
+color:white;
+} 
+
+@media (max-width: 1500px){
+    .input{
+        width: 40vw;
+    }
+
+}
