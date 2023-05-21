@@ -1,165 +1,195 @@
-import React, {useEffect, useState}   from "react";
-import {useForm}                      from "react-hook-form";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import {
-    Box,
     Button,
-    ButtonGroup,
     Card,
-    CardBody,
-    CardFooter,
-    Divider,
-    Flex,
+    CardContent,
+    CardActions,
+    Typography,
+    TextField,
     Grid,
-    GridItem,
-    Heading,
-    Image,
-    Stack,
-    Text,
-    useToast
-}                                     from "@chakra-ui/react";
-import {FaMapMarkerAlt}               from "react-icons/fa";
-import {FcSearch}                     from 'react-icons/fc';
-import Typography
-                                      from "../../core/components/CustomText/Typhography";
-import {DateBox, ScrollView, TextBox} from "devextreme-react";
-import {SimpleItem}                   from "devextreme-react/form";
-import CategoryCarousel
-                                      from "../../core/components/CarouselCategoryItem/Carousel";
+    Snackbar,
+    createTheme,
+    ThemeProvider, IconButton,
+} from "@mui/material";
+import Box from "@mui/material/Box";
+import MuiAlert, { AlertProps } from "@mui/material/Alert";
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import { styled } from '@mui/material/styles';
+import CardMedia from '@mui/material/CardMedia';
 
+// @ts-ignore
+import SUVImage     from "../../core/assets/suv.png";
+// @ts-ignore
+import CompactImage from "../../core/assets/compact.png";
+// @ts-ignore
+import Sport        from "../../core/assets/sport.png";
+// @ts-ignore
+import Sedan        from "../../core/assets/sedan.png";
+import CategoryCarousel
+                    from "../../core/components/CarouselCategoryItem/Carousel";
+import {colorRed}   from "../../core/utils/const/consts";
+
+function Alert(props: AlertProps) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+const StyledCardMedia = styled(CardMedia)({
+    height: 140,
+});
+
+
+
+const theme = createTheme();
 
 export default function Home() {
-    const {register, handleSubmit, setValue} = useForm();
-    const toast = useToast();
+    const { register, handleSubmit, setValue } = useForm();
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
 
     const [categories] = useState([
         {
-            imageUrl: 'https://www.cnnbrasil.com.br/wp-content/uploads/sites/12/2023/04/230418093558-01-new-lincoln-nautilus-suv.webp',
-            title: 'SUV',
-            id: 1
+            imageUrl: SUVImage,
+            title: "SUV",
+            id: 1,
         },
         {
-            imageUrl: 'https://www.cnnbrasil.com.br/wp-content/uploads/sites/12/2023/04/230418093558-01-new-lincoln-nautilus-suv.webp',
-            title: 'SUV',
-            id: 1
+            imageUrl: CompactImage,
+            title: "Hatch",
+            id: 2,
         },
         {
-            imageUrl: 'https://www.cnnbrasil.com.br/wp-content/uploads/sites/12/2023/04/230418093558-01-new-lincoln-nautilus-suv.webp',
-            title: 'SUV',
-            id: 1
+            imageUrl: Sport,
+            title: "Esportivo",
+            id: 3,
         },
         {
-            imageUrl: 'https://www.cnnbrasil.com.br/wp-content/uploads/sites/12/2023/04/230418093558-01-new-lincoln-nautilus-suv.webp',
-            title: 'SUV',
-            id: 1
+            imageUrl: Sedan,
+            title: "Sedan",
+            id: 4,
         },
         {
-            imageUrl: 'https://www.cnnbrasil.com.br/wp-content/uploads/sites/12/2023/04/230418093558-01-new-lincoln-nautilus-suv.webp',
-            title: 'SUV',
-            id: 1
-        }
+            imageUrl: Sedan,
+            title: "Sedan",
+            id: 5,
+        },
     ]);
 
     const onSubmit = (data: any) => {
-        toast({
-            title: "Dados submetidos.",
-            description: `Busca: ${data.search}, Data: ${data.date}`,
-            status: "success",
-            duration: 9000,
-            isClosable: true,
-        });
+        setSnackbarMessage(
+            `Dados submetidos. Busca: ${data.search}, Data: ${data.date}`
+        );
+        setOpenSnackbar(true);
     };
 
     useEffect(() => {
-        register('date'); // manually register date
+        register("date"); // manually register date
     }, [register]);
 
-    return (
-        <Box mt="4rem">
-            <ScrollView>
-                <Box as="form" onSubmit={handleSubmit(onSubmit)}>
-                    <Heading as="h2" size="xl" mb={6}>O carro ideal em
-                        todo lugar</Heading>
-                    <Grid templateColumns={{
-                        base: "repeat(1, 1fr)",
-                        md: "repeat(4, 1fr)"
-                    }} gap={6}>
-                        <GridItem>
-                            <Typography>Buscar Modelo</Typography>
-                            <TextBox
-                                placeholder="Qual carro você quer dirigir hoje?"/>
-                        </GridItem>
-                        <GridItem>
-                            <Typography>Onde você está?</Typography>
-                            <TextBox placeholder="Onde você está?">
-                                <SimpleItem
-                                    editorOptions={{readOnly: true}}>
-                                    <FaMapMarkerAlt/>
-                                </SimpleItem>
-                            </TextBox>
-                        </GridItem>
-                        <GridItem>
-                            <Typography>Data e Hora</Typography>
-                            <DateBox id="date" type="datetime"
-                                     defaultValue={new Date()}
-                                     onValueChanged={(e) => setValue(
-                                         'date', e.value)}/>
-                        </GridItem>
+    const handleCloseSnackbar = (
+        event: React.SyntheticEvent<any> | Event,
+        reason?: string
+    ) => {
+        if (reason === "clickaway") {
+            return;
+        }
 
-                        <GridItem display="flex" alignItems="end">
-                            <Button type="submit">
-                                <FcSearch size={'1.5rem'}
-                                          style={{paddingRight: '5px'}}/>Buscar
-                            </Button>
-                        </GridItem>
-                    </Grid>
-                </Box>
-                <br/>
+        setOpenSnackbar(false);
+    };
+
+    return (
+        <ThemeProvider theme={theme}>
+            <Box mt={4}>
+                <div style={{ backgroundColor: "#f5f5f5", borderRadius: 10, padding: "16px", marginTop: "3rem" }}>
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <Grid container spacing={2} alignItems="center">
+                            <Grid item xs={12} md={3}>
+                                <Typography>Buscar Modelo</Typography>
+                                <TextField
+                                    placeholder="Qual carro você quer dirigir hoje?"
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={3}>
+                                <Typography>Onde você está?</Typography>
+                                <TextField placeholder="Onde você está?" fullWidth />
+                            </Grid>
+                            <Grid item xs={12} md={3}>
+                                <Typography>Data e Hora</Typography>
+                                <TextField
+                                    id="date"
+                                    type="datetime-local"
+                                    defaultValue={new Date().toISOString().slice(0, 16)}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    fullWidth
+                                    onChange={(e) => setValue("date", e.target.value)}
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={3}>
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    style={{backgroundColor: colorRed}}
+                                    fullWidth
+                                    sx={{ display: "flex", justifyContent: "center" }}
+                                >
+                                    Buscar
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </form>
+                </div>
+
+
+
                 <CategoryCarousel categories={categories}/>
 
-
-                <Flex wrap="wrap" p={4}>
-                    {/* Substitua isso com seu data fetch ou loop */}
-                    {[1, 2, 3].map((card) => (
-                        <Card maxW="sm" m={2} key={card}>
-                            <CardBody>
-                                <Image src={categories[0].imageUrl}
-                                       alt="" borderRadius="lg"/>
-                                <Stack mt="4" spacing="1">
-                                    <Heading
-                                        size="md">{categories[0].title}</Heading>
-                                    <Text>
-                                        O que é um SUV? A sigla SUV
-                                        significa Sport Utility
-                                        Vehicle --
-                                        ou seja, veículo utilitário
-                                        esportivo. As SUVs costumam
-                                        ter porte
-                                        avantajado, além de interior
-                                        espaçoso e possibilidade de
-                                        trafegar
-                                        dentro e fora da cidade.
-                                    </Text>
-                                    <Text color="blue.600"
-                                          fontSize="2xl">
-                                        Diaria: $450
-                                    </Text>
-                                </Stack>
-                            </CardBody>
-                            <Divider/>
-                            <CardFooter>
-                                <ButtonGroup spacing="2">
-                                    <Button variant="solid"
-                                            colorScheme="blue">Ver no
-                                        mapa</Button>
-                                    <Button variant="ghost"
-                                            colorScheme="blue">Alugar</Button>
-                                </ButtonGroup>
-                            </CardFooter>
-                        </Card>
+                <Grid container spacing={2} style={{marginTop: '3rem'}}>
+                    {categories.map((category, i) => (
+                        <Grid item key={i} xs={12} sm={6} md={4}>
+                            <Card sx={{ maxWidth: 345 }}>
+                                <CardMedia
+                                    component="img"
+                                    height="194"
+                                    image={category.imageUrl}
+                                    alt={category.title}
+                                />
+                                <CardContent>
+                                    <Typography variant="h5" component="div">
+                                        {category.title}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        O que é um {category.title}? A sigla {category.title} significa Sport Utility Vehicle --
+                                        ou seja, veículo utilitário esportivo. Os {category.title} costumam ter
+                                        porte avantajado, além de interior espaçoso e possibilidade de
+                                        trafegar dentro e fora da cidade.
+                                    </Typography>
+                                </CardContent>
+                                <CardActions>
+                                    <Button size="small">Ver no mapa</Button>
+                                    <Button size="small">Alugar</Button>
+                                    <IconButton aria-label="Favoritar">
+                                        <FavoriteIcon />
+                                    </IconButton>
+                                </CardActions>
+                            </Card>
+                        </Grid>
                     ))}
-                </Flex>
-            </ScrollView>
-        </Box>
+                </Grid>
+
+
+                <Snackbar
+                    open={openSnackbar}
+                    autoHideDuration={6000}
+                    onClose={handleCloseSnackbar}
+                >
+                    <Alert onClose={handleCloseSnackbar} severity="success">
+                        {snackbarMessage}
+                    </Alert>
+                </Snackbar>
+            </Box>
+        </ThemeProvider>
     );
 }
-

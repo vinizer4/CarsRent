@@ -1,53 +1,73 @@
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper";
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/autoplay"
+
+// import required modules
+import { Pagination } from "swiper";
+
+
 import React from "react";
-import Slider from "react-slick";
 import './category-item.styles.scss'
 
 export const CategoryCarousel = ({categories}: any) => {
-    const settings = {
-        dots: true,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 4,
-        slidesToScroll: 4,
-        responsive: [
-            {
-                breakpoint: 1024,
-                settings: {
-                    slidesToShow: 3,
-                    slidesToScroll: 3,
-                },
-            },
-            {
-                breakpoint: 768,
-                settings: {
-                    slidesToShow: 2,
-                    slidesToScroll: 2,
-                },
-            },
-            {
-                breakpoint: 480,
-                settings: {
-                    slidesToShow: 1,
-                    slidesToScroll: 1,
-                },
-            },
-        ],
-    };
-
     return (
-        <div className="category-slide" >
-        <Slider {...settings}>
+        <Swiper style={{height: 'fit-content', paddingBottom: '5rem', paddingTop: '1rem'}}
+            spaceBetween={15}
+            slidesPerView={3}
+            navigation
+            pagination={{ clickable: true }}
+            autoplay={{ delay: 5000 }}
+            modules={[Pagination, Autoplay]}
+            className="mySwiper"
+            onSlideChange={() => console.log('slide change')}
+            onSwiper={(swiper) => console.log(swiper)}
+            breakpoints={{
+                // when window width is >= 640px
+                640: {
+                    width: 640,
+                    slidesPerView: 1,
+                },
+                // when window width is >= 768px
+                768: {
+                    width: 768,
+                    slidesPerView: 2,
+                },
+                1024: {
+                    width: 1024,
+                    slidesPerView: 3,
+                },
+            }}
+        >
             {categories.map((category: any, index: any) => (
-
-                    <div key={index}>
-                    <img className={'img'} src={category.imageUrl} alt={category.title}/>
+                <SwiperSlide
+                    key={index}
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
+                    <img
+                        className='img'
+                        src={category.imageUrl}
+                        alt={category.title}
+                        style={{
+                            height: '10rem',
+                            width: '17rem',
+                            objectFit: 'cover',
+                            outline: 'none',
+                            border: 'none'
+                        }}
+                    />
                     <h3 className="category-title">{category.title}</h3>
-                    </div>
+                </SwiperSlide>
             ))}
-        </Slider>
-        </div>
+        </Swiper>
     );
 };
-
 
 export default CategoryCarousel;

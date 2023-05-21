@@ -1,50 +1,58 @@
-import styles from "./Footer.module.css"
-import Container from 'react-bootstrap/Container';
-import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
+import { Container, Link, Box, AppBar, Toolbar, IconButton } from "@mui/material";
+
+// @ts-ignore
+import facebookImg from "../../assets/images/facebook.png";
+// @ts-ignore
+import linkedinImg from "../../assets/images/linkedin.png";
+// @ts-ignore
+import twitterImg from "../../assets/images/twitter.png";
+// @ts-ignore
+import instagramImg from "../../assets/images/instagram.png";
 
 function Footer() {
-  return (
-
-    <Navbar fixed="bottom" bg="dark" variant="dark">
-    <Container>
-      <Navbar.Brand > <span className={styles.brandText}>@2023 Digital House - Grupo 03</span> </Navbar.Brand>
-      <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-      <Navbar.Collapse className="justify-content-end" id="responsive-navbar-nav">
-        <Nav className="">
-        <img
-          alt=""
-          src="../../src/core/assets/images/facebook.png"
-          width="30"
-          height="30"
-          className={styles.icon}
-        />
-        <img
-          alt=""
-          src="../../src/core/assets/images/linkedin.png"
-          width="30"
-          height="30"
-          className={styles.icon}
-        />
-        <img
-          alt=""
-          src="../../src/core/assets/images/twitter.png"
-          width="30"
-          height="30"
-          className={styles.icon}
-        />
-        <img
-          alt=""
-          src="../../src/core/assets/images/instagram.png"
-          width="30"
-          height="30"
-          className={styles.icon}
-        />
-        </Nav>
-      </Navbar.Collapse>
-    </Container>
-  </Navbar>  
-  );
-};
+    return (
+        <AppBar
+            position="fixed"
+            sx={{
+                top: 'auto',
+                bottom: 0,
+                backgroundColor: 'grey.900', // or 'primary.dark'
+                height: '3rem',
+            }}
+        >
+            <Container style={{marginTop: "-0.5rem"}}>
+                <Toolbar disableGutters>
+                    <Box flexGrow={1}>
+                        <Link
+                            href="#"
+                            color="inherit"
+                            underline="none"
+                            sx={{
+                                color: 'common.white',
+                                fontWeight: 'fontWeightBold',
+                            }}
+                        >
+                            @2023 Digital House - Grupo 03
+                        </Link>
+                    </Box>
+                    <Box>
+                        <IconButton href="#" color="inherit">
+                            <img src={facebookImg} width={24} height={24} alt="Facebook" />
+                        </IconButton>
+                        <IconButton href="#" color="inherit">
+                            <img src={linkedinImg} width={24} height={24} alt="LinkedIn" />
+                        </IconButton>
+                        <IconButton href="#" color="inherit">
+                            <img src={twitterImg} width={24} height={24} alt="Twitter" />
+                        </IconButton>
+                        <IconButton href="#" color="inherit">
+                            <img src={instagramImg} width={24} height={24} alt="Instagram" />
+                        </IconButton>
+                    </Box>
+                </Toolbar>
+            </Container>
+        </AppBar>
+    );
+}
 
 export default Footer;

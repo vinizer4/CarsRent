@@ -1,11 +1,11 @@
 .brandText {
-    font-size: 16px; /* default size for desktop and larger screens */
+    font-size: 12px; /* default size for desktop and larger screens */
 }
 
 .icon {
-    margin: 10px;
-    width: 30px;
-    height: 30px;
+    margin: 6px;
+    width: 15px;
+    height: 15px;
 }
 
 @media (max-width: 1200px) {
@@ -13,8 +13,8 @@
         font-size: 14px; /* slightly smaller for smaller desktops or large tablets */
     }
     .icon {
-        width: 25px;
-        height: 25px;
+        width: 15px;
+        height: 15px;
     }
 }
 
@@ -23,14 +23,14 @@
         font-size: 12px; /* even smaller for tablets in portrait mode */
     }
     .icon {
-        width: 20px;
-        height: 20px;
+        width: 15px;
+        height: 15px;
     }
 }
 
 @media (max-width: 768px) {
     .brandText {
-        font-size: 10px; /* smallest size for mobile devices */
+        font-size: 5px; /* smallest size for mobile devices */
     }
     .icon {
         width: 15px;

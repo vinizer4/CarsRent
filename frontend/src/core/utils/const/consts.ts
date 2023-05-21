@@ -1,5 +1,7 @@
 export const colorPrimary = "#004AAD";
 export const colorSecondary = "#067FFF";
+
+export const colorRed = '#F14648'
 export const colorTerciary = "#073577";
 export const colorQuarternary = "#409091";
 export const colorFont = "#000";

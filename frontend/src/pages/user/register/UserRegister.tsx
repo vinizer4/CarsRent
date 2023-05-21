@@ -1,20 +1,19 @@
 import React from 'react';
-import {
-    FormControl,
-    FormLabel,
-    Input,
-    Button,
-    Box,
-    VStack,
-    Text,
-    Link as ChakraLink,
-    FormErrorMessage
-} from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
 import { Link as RouterLink } from "react-router-dom";
 import { UserService } from "../../../core/service/user/UserService";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
+import {
+    Container,
+    TextField,
+    Button,
+    Typography,
+    Link,
+    Box,
+    FormControl,
+    FormHelperText
+} from '@mui/material';
 
 const validationSchema = yup.object().shape({
     email: yup
@@ -51,95 +50,117 @@ export default function Register() {
         console.log(data);
         try {
             const res = await UserService.Login(data);
+            // You can add additional logic after a successful login if necessary
         } catch (error) {
             console.error(error);
         }
     };
 
     return (
-        <Box width="100%" maxW="500px" mx="auto" mt="3rem" >
+        <Container maxWidth="sm" sx={{ mt: '3rem' }}>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <VStack spacing={2}>
-                    <Text fontSize="2xl" fontWeight="bold">Criar Conta</Text>
-                    <FormControl id="email" isInvalid={!!errors.email}>
-                        <FormLabel>Digite seu e-mail</FormLabel>
+                <Box
+                    component="form"
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        '& .MuiTextField-root': { m: 1, width: '50ch' },
+                    }}
+                    noValidate
+                    autoComplete="off"
+                >
+                    <Typography variant="h4" component="h1" gutterBottom>
+                        Criar Conta
+                    </Typography>
+                    <FormControl error={!!errors.email}>
                         <Controller
                             name="email"
                             control={control}
                             defaultValue=""
-                            render={({ field }) => (
-                                <Input placeholder="Email" type="email" {...field} />
-                            )}
+                            render={({ field }) =>
+                                <TextField
+                                    {...field}
+                                    label="Digite seu e-mail"
+                                    error={!!errors.email}
+                                    helperText={errors.email && String(errors.email.message)}
+                                    variant="outlined"
+                                />}
                         />
-                        <FormErrorMessage>
-                            {errors.email?.message && errors.email?.message.toString()}
-                        </FormErrorMessage>
                     </FormControl>
-                    <FormControl id="firstName" isInvalid={!!errors.firstName}>
-                        <FormLabel>Nome</FormLabel>
+                    <FormControl error={!!errors.firstName}>
                         <Controller
                             name="firstName"
                             control={control}
                             defaultValue=""
-                            render={({ field }) => (
-                                <Input placeholder="Nome" type="text" {...field} />
-                            )}
+                            render={({ field }) =>
+                                <TextField
+                                    {...field}
+                                    label="Nome"
+                                    error={!!errors.firstName}
+                                    helperText={errors.firstName && String(errors.firstName.message)}
+                                    variant="outlined"
+                                />}
                         />
-                        <FormErrorMessage>
-                            {errors.firstName?.message && errors.firstName?.message.toString()}
-                        </FormErrorMessage>
                     </FormControl>
-                    <FormControl id="lastName" isInvalid={!!errors.lastName}>
-                        <FormLabel>Sobrenome</FormLabel>
+                    <FormControl error={!!errors.lastName}>
                         <Controller
                             name="lastName"
                             control={control}
                             defaultValue=""
-                            render={({ field }) => (
-                                <Input placeholder="Sobrenome" type="text" {...field} />
-                            )}
+                            render={({ field }) =>
+                                <TextField
+                                    {...field}
+                                    label="Sobrenome"
+                                    error={!!errors.lastName}
+                                    helperText={errors.lastName && String(errors.lastName.message)}
+                                    variant="outlined"
+                                />}
                         />
-                        <FormErrorMessage>
-                            {errors.lastName?.message && errors.lastName?.message.toString()}
-                        </FormErrorMessage>
                     </FormControl>
-                    <FormControl id="password" isInvalid={!!errors.password}>
-                        <FormLabel>Senha</FormLabel>
+                    <FormControl error={!!errors.password}>
                         <Controller
                             name="password"
                             control={control}
                             defaultValue=""
-                            render={({ field }) => (
-                                <Input placeholder="Senha" type="password" {...field} />
-                            )}
+                            render={({ field }) =>
+                                <TextField
+                                    {...field}
+                                    label="Senha"
+                                    type="password"
+                                    error={!!errors.password}
+                                    helperText={errors.password && String(errors.password.message)}
+                                    variant="outlined"
+                                />}
                         />
-                        <FormErrorMessage>
-                            {errors.password?.message && errors.password?.message.toString()}
-                        </FormErrorMessage>
                     </FormControl>
-                    <FormControl id="confirmpassword" isInvalid={!!errors.confirmpassword}>
-                        <FormLabel>Confirmar Senha</FormLabel>
+                    <FormControl error={!!errors.confirmpassword}>
                         <Controller
                             name="confirmpassword"
                             control={control}
                             defaultValue=""
-                            render={({ field }) => (
-                                <Input placeholder="Confirmar Senha" type="password" {...field} />
-                            )}
+                            render={({ field }) =>
+                                <TextField
+                                    {...field}
+                                    label="Confirmar Senha"
+                                    type="password"
+                                    error={!!errors.confirmpassword}
+                                    helperText={errors.confirmpassword && String(errors.confirmpassword.message)}
+                                    variant="outlined"
+                                />}
                         />
-                        <FormErrorMessage>
-                            {errors.confirmpassword?.message && errors.confirmpassword?.message.toString()}
-                        </FormErrorMessage>
                     </FormControl>
                     <br/>
-                    <Button width="full" colorScheme="blue" type="submit">
+                    <Button variant="contained" color="primary" type="submit">
                         Criar Conta
                     </Button>
-                    <Text fontSize="sm">
-                        Já tem conta? <ChakraLink as={RouterLink} to="/login" color="blue.500">Iniciar Sessão</ChakraLink>
-                    </Text>
-                </VStack>
+                    <br/>
+                    <Typography variant="body2" color="text.secondary">
+                        Já tem conta? <Link component={RouterLink} to="/login" color="primary">Iniciar Sessão</Link>
+                    </Typography>
+                </Box>
             </form>
-        </Box>
+        </Container>
     );
 }
