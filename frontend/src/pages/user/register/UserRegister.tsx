@@ -66,7 +66,13 @@ export default function Register() {
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        '& .MuiTextField-root': { m: 1, width: '50ch' },
+                        '& .MuiTextField-root': {
+                            m: 1,
+                            width: {
+                                xs: '100%', // Full width on extra small screens
+                                sm: '50ch' // Limited to 50ch on larger screens
+                            }
+                        },
                     }}
                     noValidate
                     autoComplete="off"

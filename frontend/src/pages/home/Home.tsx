@@ -29,6 +29,7 @@ import Sedan        from "../../core/assets/sedan.png";
 import CategoryCarousel
                     from "../../core/components/CarouselCategoryItem/Carousel";
 import {colorRed}   from "../../core/utils/const/consts";
+import {ScrollView} from "devextreme-react";
 
 function Alert(props: AlertProps) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -99,8 +100,9 @@ export default function Home() {
 
     return (
         <ThemeProvider theme={theme}>
+            <Box overflow="auto">
             <Box mt={4}>
-                <div style={{ backgroundColor: "#f5f5f5", borderRadius: 10, padding: "16px", marginTop: "3rem" }}>
+                <div style={{ backgroundColor: "#f5f5f5", borderRadius: 10, padding: "16px", marginTop: "3rem", margin: '3rem' }}>
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <Grid container spacing={2} alignItems="center">
                             <Grid item xs={12} md={3}>
@@ -190,6 +192,8 @@ export default function Home() {
                     </Alert>
                 </Snackbar>
             </Box>
+            </Box>
+            <br/>
         </ThemeProvider>
     );
 }
