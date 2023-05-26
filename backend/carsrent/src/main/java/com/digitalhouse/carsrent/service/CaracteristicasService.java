@@ -10,8 +10,12 @@ import java.util.List;
 @Service
 public class CaracteristicasService {
 
+    private final CaracteristicasRepository caracteristicasRepository;
+
     @Autowired
-    private CaracteristicasRepository caracteristicasRepository;
+    public CaracteristicasService(CaracteristicasRepository caracteristicasRepository) {
+        this.caracteristicasRepository = caracteristicasRepository;
+    }
 
     public Caracteristicas createCaracteristica(Caracteristicas feature) {
         return caracteristicasRepository.save(feature);

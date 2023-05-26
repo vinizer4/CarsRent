@@ -1,6 +1,6 @@
 package com.digitalhouse.carsrent.model;
 
-import com.digitalhouse.carsrent.rest.dto.caracteristicas.CaracteristicasDTO;
+import com.digitalhouse.carsrent.rest.dto.caracteristicas.CaracteristicasPostDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,11 +32,16 @@ public class Caracteristicas {
         this.produto = produto;
     }
 
-    public CaracteristicasDTO toDTO() {
-        return new CaracteristicasDTO(id, nome, icone, produto != null ? produto.getId() : null);
+    public Caracteristicas(String nome, String icone) {
+        this.nome = nome;
+        this.icone = icone;
     }
 
-    public static Caracteristicas fromDTO(CaracteristicasDTO dto, Product produto) {
-        return new Caracteristicas(dto.getNome(), dto.getIcone(), produto);
+    public CaracteristicasPostDTO toDTO() {
+        return new CaracteristicasPostDTO(nome, icone);
+    }
+
+    public static Caracteristicas fromDTO(CaracteristicasPostDTO dto) {
+        return new Caracteristicas(dto.getNome(), dto.getIcone());
     }
 }

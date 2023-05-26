@@ -1,7 +1,13 @@
 package com.digitalhouse.carsrent.model;
 
-import com.digitalhouse.carsrent.rest.dto.caracteristicas.CaracteristicasDTO;
-import com.digitalhouse.carsrent.rest.dto.image.ImageDTO;
+import com.digitalhouse.carsrent.model.Caracteristicas;
+import com.digitalhouse.carsrent.model.Category;
+import com.digitalhouse.carsrent.model.Cidade;
+import com.digitalhouse.carsrent.model.Image;
+import com.digitalhouse.carsrent.repository.CaracteristicasRepository;
+import com.digitalhouse.carsrent.repository.CategoryRepository;
+import com.digitalhouse.carsrent.repository.CidadeRepository;
+import com.digitalhouse.carsrent.repository.ImageRepository;
 import com.digitalhouse.carsrent.rest.dto.product.ProductDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,37 +51,34 @@ public class Product {
     )
     private List<Caracteristicas> caracteristicas;
 
-    public Product(String nome, String descricao, Category categoria, Cidade cidade) {
+    public Product(String nome, String descricao, Category categoria, Cidade cidade, List<Image> imagens, List<Caracteristicas> caracteristicas) {
         this.nome = nome;
         this.descricao = descricao;
         this.categoria = categoria;
         this.cidade = cidade;
+        this.imagens = imagens;
+        this.caracteristicas = caracteristicas;
     }
 
     public ProductDTO toDTO() {
-        List<ImageDTO> imagensDTO = imagens.stream().map(Image::toDTO).collect(Collectors.toList());
-        List<CaracteristicasDTO> caracteristicasDTO = caracteristicas.stream().map(Caracteristicas::toDTO).collect(Collectors.toList());
+        List<Long> imagensIds = imagens.stream().map(Image::getId).collect(Collectors.toList());
+        List<Long> caracteristicasIds = caracteristicas.stream().map(Caracteristicas::getId).collect(Collectors.toList());
 
-        return new ProductDTO(id, nome, descricao, categoria.toDTO(), cidade.toDTO(), imagensDTO, caracteristicasDTO);
+        return new ProductDTO(id, nome, descricao, categoria.getId(), cidade.getId(), imagensIds, caracteristicasIds);
     }
 
-    public static Product fromDTO(ProductDTO dto) {
-        Category categoria = Category.fromDTO(dto.getCategoria());
-        Cidade cidade = Cidade.fromDTO(dto.getCidade());
+    public static Product fromDTO(ProductDTO dto, CategoryRepository categoryRepository, CidadeRepository cidadeRepository, ImageRepository imageRepository, CaracteristicasRepository caracteristicasRepository) {
+        Category categoria = categoryRepository.findById(dto.getCategoriaId()).orElse(null);
+        Cidade cidade = cidadeRepository.findById(dto.getCidadeId()).orElse(null);
 
-        Product product = new Product(dto.getNome(), dto.getDescricao(), categoria, cidade);
-
-        List<Image> imagens = dto.getImagens().stream()
-                                 .map(imageDTO -> Image.fromDTO(imageDTO, product))
+        List<Image> imagens = dto.getImagensIds().stream()
+                                 .map(imageId -> imageRepository.findById(imageId).orElse(null))
                                  .collect(Collectors.toList());
-        product.setImagens(imagens);
 
-        List<Caracteristicas> caracteristicas =
-                dto.getCaracteristicas().stream()
-                   .map(caracteristicasDTO -> Caracteristicas.fromDTO(caracteristicasDTO, product))
-                   .collect(Collectors.toList());
-        product.setCaracteristicas(caracteristicas);
+        List<Caracteristicas> caracteristicas = dto.getCaracteristicasIds().stream()
+                                                   .map(caracteristicasId -> caracteristicasRepository.findById(caracteristicasId).orElse(null))
+                                                   .collect(Collectors.toList());
 
-        return product;
+        return new Product(dto.getNome(), dto.getDescricao(), categoria, cidade, imagens, caracteristicas);
     }
 }
