@@ -6,7 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-
+//TODO: CORRIGIR REMOVER CAMPO DE IMAGENS APOS CADASTRAR O PRODUTO
+// VAI SER FEITO O RELACIONEMENTO NO ENDPOINT DE IMAGEM
 @Getter
 @Setter
 @NoArgsConstructor
