@@ -9,10 +9,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CaracteristicasDTO {
-    private Long id;
+public class CaracteristicasPostDTO
+{
+    //private Long id;
     private String nome;
     private String icone;
-    private Long produtoId; // Adicionando o campo produtoId para referenciar o produto relacionado
 
 }
