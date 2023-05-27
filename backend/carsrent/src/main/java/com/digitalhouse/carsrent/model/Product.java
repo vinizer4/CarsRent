@@ -1,14 +1,10 @@
 package com.digitalhouse.carsrent.model;
 
-import com.digitalhouse.carsrent.model.Caracteristicas;
-import com.digitalhouse.carsrent.model.Category;
-import com.digitalhouse.carsrent.model.Cidade;
-import com.digitalhouse.carsrent.model.Image;
 import com.digitalhouse.carsrent.repository.CaracteristicasRepository;
 import com.digitalhouse.carsrent.repository.CategoryRepository;
 import com.digitalhouse.carsrent.repository.CidadeRepository;
 import com.digitalhouse.carsrent.repository.ImageRepository;
-import com.digitalhouse.carsrent.rest.dto.product.ProductDTO;
+import com.digitalhouse.carsrent.rest.dto.product.ProductGetDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -60,14 +56,14 @@ public class Product {
         this.caracteristicas = caracteristicas;
     }
 
-    public ProductDTO toDTO() {
+    public ProductGetDTO toDTO() {
         List<Long> imagensIds = imagens.stream().map(Image::getId).collect(Collectors.toList());
         List<Long> caracteristicasIds = caracteristicas.stream().map(Caracteristicas::getId).collect(Collectors.toList());
 
-        return new ProductDTO(id, nome, descricao, categoria.getId(), cidade.getId(), imagensIds, caracteristicasIds);
+        return new ProductGetDTO(id, nome, descricao, categoria.getId(), cidade.getId(), imagensIds, caracteristicasIds);
     }
 
-    public static Product fromDTO(ProductDTO dto, CategoryRepository categoryRepository, CidadeRepository cidadeRepository, ImageRepository imageRepository, CaracteristicasRepository caracteristicasRepository) {
+    public static Product fromDTO(ProductGetDTO dto, CategoryRepository categoryRepository, CidadeRepository cidadeRepository, ImageRepository imageRepository, CaracteristicasRepository caracteristicasRepository) {
         Category categoria = categoryRepository.findById(dto.getCategoriaId()).orElse(null);
         Cidade cidade = cidadeRepository.findById(dto.getCidadeId()).orElse(null);
 

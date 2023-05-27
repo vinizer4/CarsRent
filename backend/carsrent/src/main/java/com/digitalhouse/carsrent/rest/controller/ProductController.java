@@ -1,7 +1,7 @@
 package com.digitalhouse.carsrent.rest.controller;
 
 import com.digitalhouse.carsrent.model.Product;
-import com.digitalhouse.carsrent.rest.dto.product.ProductDTO;
+import com.digitalhouse.carsrent.rest.dto.product.ProductGetDTO;
 import com.digitalhouse.carsrent.service.CategoryService;
 import com.digitalhouse.carsrent.service.CidadeService;
 import com.digitalhouse.carsrent.service.CaracteristicasService;
@@ -35,7 +35,7 @@ public class ProductController {
     private ImageService imageService;
 
     @PostMapping
-    public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO dto) {
+    public ResponseEntity<ProductGetDTO> createProduct(@RequestBody ProductGetDTO dto) {
         Product product = productService.fromDTO(dto);
         Product newProduct = productService.createProduct(product);
 
@@ -45,7 +45,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
+    public ResponseEntity<ProductGetDTO> getProductById(@PathVariable Long id) {
         Product product = productService.findById(id);
         if (product != null) {
             return new ResponseEntity<>(product.toDTO(), HttpStatus.OK);
@@ -55,14 +55,14 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductDTO>> getAllProducts() {
+    public ResponseEntity<List<ProductGetDTO>> getAllProducts() {
         List<Product> products = productService.getAllProducts();
-        List<ProductDTO> dtos = products.stream().map(Product::toDTO).collect(Collectors.toList());
+        List<ProductGetDTO> dtos = products.stream().map(Product::toDTO).collect(Collectors.toList());
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody ProductDTO dto) {
+    public ResponseEntity<ProductGetDTO> updateProduct(@PathVariable Long id, @RequestBody ProductGetDTO dto) {
         Product productToUpdate = productService.fromDTO(dto);
         productToUpdate.setId(id);
 

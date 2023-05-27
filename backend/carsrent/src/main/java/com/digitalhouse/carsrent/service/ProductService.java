@@ -2,7 +2,7 @@ package com.digitalhouse.carsrent.service;
 
 import com.digitalhouse.carsrent.model.*;
 import com.digitalhouse.carsrent.repository.*;
-import com.digitalhouse.carsrent.rest.dto.product.ProductDTO;
+import com.digitalhouse.carsrent.rest.dto.product.ProductGetDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +31,7 @@ public class ProductService {
         this.caracteristicasRepository = caracteristicasRepository;
     }
 
-    public Product fromDTO(ProductDTO dto) {
+    public Product fromDTO(ProductGetDTO dto) {
         Category categoria = categoryRepository.findById(dto.getCategoriaId()).orElse(null);
         Cidade cidade = cidadeRepository.findById(dto.getCidadeId()).orElse(null);
 
@@ -49,11 +49,11 @@ public class ProductService {
     }
 
 
-    public ProductDTO toDTO(Product product) {
+    public ProductGetDTO toDTO(Product product) {
         List<Long> imagensIds = product.getImagens().stream().map(Image::getId).collect(Collectors.toList());
         List<Long> caracteristicasIds = product.getCaracteristicas().stream().map(Caracteristicas::getId).collect(Collectors.toList());
 
-        return new ProductDTO(product.getId(), product.getNome(), product.getDescricao(), product.getCategoria().getId(), product.getCidade().getId(), imagensIds, caracteristicasIds);
+        return new ProductGetDTO(product.getId(), product.getNome(), product.getDescricao(), product.getCategoria().getId(), product.getCidade().getId(), imagensIds, caracteristicasIds);
     }
 
     public Product findById(Long id) {
