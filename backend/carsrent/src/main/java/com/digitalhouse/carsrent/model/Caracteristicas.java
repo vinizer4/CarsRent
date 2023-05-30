@@ -26,12 +26,6 @@ public class Caracteristicas {
     @JoinColumn(name = "produto_id")
     private Product produto;
 
-    public Caracteristicas(String nome, String icone, Product produto) {
-        this.nome = nome;
-        this.icone = icone;
-        this.produto = produto;
-    }
-
     public Caracteristicas(String nome, String icone) {
         this.nome = nome;
         this.icone = icone;

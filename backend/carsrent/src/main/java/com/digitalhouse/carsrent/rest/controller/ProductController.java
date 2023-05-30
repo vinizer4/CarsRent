@@ -2,10 +2,8 @@ package com.digitalhouse.carsrent.rest.controller;
 
 import com.digitalhouse.carsrent.model.Product;
 import com.digitalhouse.carsrent.rest.dto.product.ProductGetDTO;
-import com.digitalhouse.carsrent.service.CategoryService;
-import com.digitalhouse.carsrent.service.CidadeService;
-import com.digitalhouse.carsrent.service.CaracteristicasService;
-import com.digitalhouse.carsrent.service.ImageService;
+import com.digitalhouse.carsrent.rest.dto.product.ProductPostDTO;
+import com.digitalhouse.carsrent.rest.dto.product.ProductPutDTO;
 import com.digitalhouse.carsrent.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,28 +17,20 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/products")
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
 
     @Autowired
-    private CategoryService categoryService;
-
-    @Autowired
-    private CidadeService cidadeService;
-
-    @Autowired
-    private CaracteristicasService caracteristicasService;
-
-    @Autowired
-    private ImageService imageService;
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
 
     @PostMapping
-    public ResponseEntity<ProductGetDTO> createProduct(@RequestBody ProductGetDTO dto) {
-        Product product = productService.fromDTO(dto);
+    public ResponseEntity<ProductGetDTO> createProduct(@RequestBody ProductPostDTO dto) {
+        Product product = productService.fromPostDTO(dto);
         Product newProduct = productService.createProduct(product);
 
         return newProduct != null ?
-                new ResponseEntity<>(newProduct.toDTO(), HttpStatus.CREATED) :
+                new ResponseEntity<>(productService.toDTO(newProduct), HttpStatus.CREATED) :
                 new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
@@ -48,7 +38,7 @@ public class ProductController {
     public ResponseEntity<ProductGetDTO> getProductById(@PathVariable Long id) {
         Product product = productService.findById(id);
         if (product != null) {
-            return new ResponseEntity<>(product.toDTO(), HttpStatus.OK);
+            return new ResponseEntity<>(productService.toDTO(product), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -57,18 +47,21 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<List<ProductGetDTO>> getAllProducts() {
         List<Product> products = productService.getAllProducts();
-        List<ProductGetDTO> dtos = products.stream().map(Product::toDTO).collect(Collectors.toList());
+        List<ProductGetDTO> dtos = products.stream().map(productService::toDTO).collect(Collectors.toList());
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductGetDTO> updateProduct(@PathVariable Long id, @RequestBody ProductGetDTO dto) {
-        Product productToUpdate = productService.fromDTO(dto);
-        productToUpdate.setId(id);
+    public ResponseEntity<ProductGetDTO> updateProduct(@PathVariable Long id, @RequestBody ProductPutDTO dto) {
+        if (!id.equals(dto.getId())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
+        Product productToUpdate = productService.fromPutDTO(dto);
         Product updatedProduct = productService.updateProduct(productToUpdate);
+
         return updatedProduct != null ?
-                new ResponseEntity<>(updatedProduct.toDTO(), HttpStatus.OK) :
+                new ResponseEntity<>(productService.toDTO(updatedProduct), HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
@@ -82,4 +75,19 @@ public class ProductController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping("/bycity/{cityId}")
+    public ResponseEntity<List<ProductGetDTO>> getProductsByCity(@PathVariable Long cityId) {
+        List<Product> products = productService.findByCityId(cityId);
+        List<ProductGetDTO> dtos = products.stream().map(productService::toDTO).collect(Collectors.toList());
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
+    }
+
+    @GetMapping("/bycategory/{categoryId}")
+    public ResponseEntity<List<ProductGetDTO>> getProductsByCategory(@PathVariable Long categoryId) {
+        List<Product> products = productService.findByCategoryId(categoryId);
+        List<ProductGetDTO> dtos = products.stream().map(productService::toDTO).collect(Collectors.toList());
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
+    }
+
 }
