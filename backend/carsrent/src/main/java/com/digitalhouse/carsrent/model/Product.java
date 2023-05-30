@@ -1,14 +1,12 @@
 package com.digitalhouse.carsrent.model;
 
-import com.digitalhouse.carsrent.model.Caracteristicas;
-import com.digitalhouse.carsrent.model.Category;
-import com.digitalhouse.carsrent.model.Cidade;
-import com.digitalhouse.carsrent.model.Image;
 import com.digitalhouse.carsrent.repository.CaracteristicasRepository;
 import com.digitalhouse.carsrent.repository.CategoryRepository;
 import com.digitalhouse.carsrent.repository.CidadeRepository;
 import com.digitalhouse.carsrent.repository.ImageRepository;
-import com.digitalhouse.carsrent.rest.dto.product.ProductDTO;
+import com.digitalhouse.carsrent.rest.dto.product.ProductGetDTO;
+import com.digitalhouse.carsrent.rest.dto.product.ProductPostDTO;
+import com.digitalhouse.carsrent.rest.dto.product.ProductPutDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -60,25 +58,38 @@ public class Product {
         this.caracteristicas = caracteristicas;
     }
 
-    public ProductDTO toDTO() {
-        List<Long> imagensIds = imagens.stream().map(Image::getId).collect(Collectors.toList());
-        List<Long> caracteristicasIds = caracteristicas.stream().map(Caracteristicas::getId).collect(Collectors.toList());
+    public ProductPostDTO toPostDTO() {
+        List<Long> caracteristicasIds = this.caracteristicas.stream().map(Caracteristicas::getId).collect(Collectors.toList());
 
-        return new ProductDTO(id, nome, descricao, categoria.getId(), cidade.getId(), imagensIds, caracteristicasIds);
+        return new ProductPostDTO(this.nome, this.descricao, this.categoria.getId(), this.cidade.getId(), caracteristicasIds);
     }
 
-    public static Product fromDTO(ProductDTO dto, CategoryRepository categoryRepository, CidadeRepository cidadeRepository, ImageRepository imageRepository, CaracteristicasRepository caracteristicasRepository) {
+    public ProductGetDTO toDTO() {
+        List<Long> imagensIds = this.imagens.stream().map(Image::getId).collect(Collectors.toList());
+        List<Long> caracteristicasIds = this.caracteristicas.stream().map(Caracteristicas::getId).collect(Collectors.toList());
+
+        return new ProductGetDTO(this.id, this.nome, this.descricao, this.categoria.getId(), this.cidade.getId(), imagensIds, caracteristicasIds);
+    }
+
+    public static Product fromPostDTO(ProductPostDTO dto, CategoryRepository categoryRepository, CidadeRepository cidadeRepository, CaracteristicasRepository caracteristicasRepository) {
         Category categoria = categoryRepository.findById(dto.getCategoriaId()).orElse(null);
         Cidade cidade = cidadeRepository.findById(dto.getCidadeId()).orElse(null);
-
-        List<Image> imagens = dto.getImagensIds().stream()
-                                 .map(imageId -> imageRepository.findById(imageId).orElse(null))
-                                 .collect(Collectors.toList());
 
         List<Caracteristicas> caracteristicas = dto.getCaracteristicasIds().stream()
                                                    .map(caracteristicasId -> caracteristicasRepository.findById(caracteristicasId).orElse(null))
                                                    .collect(Collectors.toList());
 
-        return new Product(dto.getNome(), dto.getDescricao(), categoria, cidade, imagens, caracteristicas);
+        return new Product(dto.getNome(), dto.getDescricao(), categoria, cidade, null, caracteristicas);
+    }
+
+    public static Product fromPutDTO(ProductPutDTO dto, CategoryRepository categoryRepository, CidadeRepository cidadeRepository, ImageRepository imageRepository, CaracteristicasRepository caracteristicasRepository) {
+        Category categoria = categoryRepository.findById(dto.getCategoriaId()).orElse(null);
+        Cidade cidade = cidadeRepository.findById(dto.getCidadeId()).orElse(null);
+
+        List<Caracteristicas> caracteristicas = dto.getCaracteristicasIds().stream()
+                                                   .map(caracteristicasId -> caracteristicasRepository.findById(caracteristicasId).orElse(null))
+                                                   .collect(Collectors.toList());
+
+        return new Product(dto.getNome(), dto.getDescricao(), categoria, cidade, null, caracteristicas);
     }
 }

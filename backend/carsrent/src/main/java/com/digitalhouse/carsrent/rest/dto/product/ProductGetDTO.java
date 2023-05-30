@@ -12,7 +12,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductDTO {
+public class ProductGetDTO
+{
     private Long id;
     private String nome;
     private String descricao;
