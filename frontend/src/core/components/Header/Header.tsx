@@ -17,7 +17,7 @@ function Header() {
 
     return (
         <>
-            <AppBar style={{width: "100vw", backgroundColor: colorSoftBlack}}>
+            <AppBar style={{width: "100%", backgroundColor: colorSoftBlack}}>
                 <Toolbar>
                     <IconButton
                         edge="start"
@@ -26,16 +26,18 @@ function Header() {
                         sx={{ width: '5rem', height: '10%', marginRight: '1rem', marginLeft: '1rem' }}
                         onClick={() => navigate('/home')}
                     >
-                        <img style={{width: "6rem"}} alt="Logo" src="../../src/core/assets/images/logo.png" />
+                        <img style={{width: "7rem"}} alt="Logo" src="../../src/core/assets/images/logo.png" />
                     </IconButton>
                     {!isMobile && (
                         <Typography
                             variant="h5"
                             sx={{
                                 flexGrow: 1,
-                                fontSize: '2rem',
+                                fontSize: '1.5rem',
                                 transition: 'font-size 0.3s',
-                                marginRight: "2rem"
+                                marginRight: "2rem",
+                                marginLeft: "1rem",
+                                cursor: 'pointer'
                             }}
                             onClick={() => navigate('/home')}
                         >
@@ -57,11 +59,15 @@ function Header() {
                                 color="inherit"
                                 component={Link}
                                 to="/login"
-                                sx={{ backgroundColor: colorRed, border: `1px solid ${colorRed}`, marginRight: '1rem' }}
+                                sx={{ backgroundColor: colorRed, border: `1px solid ${colorRed}`, marginRight: '1rem',
+                                width: { xs: '20vw', sm: '10vw', md: '20vw', lg: '20vw' }
+                            }}
                             >
                                 Iniciar Sessão
                             </Button>
-                            <Button color="inherit" component={Link} to="/register">
+                            <Button color="inherit" component={Link} to="/register"
+                            sx={{width: { xs: '20vw', sm: '10vw', md: '20vw', lg: '20vw'}}}
+                            >
                                 Criar Conta
                             </Button>
                         </>

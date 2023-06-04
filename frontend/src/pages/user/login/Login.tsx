@@ -45,7 +45,7 @@ export default function Login() {
     };
 
     return (
-        <Container maxWidth="sm" sx={{ mt: '3rem' }}>
+        <Container maxWidth="sm" sx={{ mt: '8rem' }}>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Box
                     component="form"
@@ -54,8 +54,14 @@ export default function Login() {
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        '& .MuiTextField-root': { m: 1, width: '50ch' },
+                        '& .MuiTextField-root': { 
+                            m: 1,
+                            width: {
+                              xs: '100%', // Full width on extra small screens
+                              sm: '50ch' // Limited to 50ch on larger screens
+                         }, 
                     }}
+                }
                     noValidate
                     autoComplete="off"
                 >
@@ -93,7 +99,7 @@ export default function Login() {
                                 />}
                         />
                     </FormControl>
-                    <Button variant="contained" color="primary" type="submit">
+                    <Button style={{marginTop: "1rem", backgroundColor:"red"}} variant="contained" type="submit">
                         Entrar
                     </Button>
                     <br/>

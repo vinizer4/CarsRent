@@ -18,6 +18,7 @@ const StyledFooter = styled('footer')(({ theme }) => ({
     justifyContent: "space-between",
     alignItems: "center",
     padding: "0 1rem",
+    width: "100%",
 }));
 
 function Footer() {

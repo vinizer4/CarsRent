@@ -1,6 +1,6 @@
 import React from 'react';
 import Typography from "../CustomText/Typhography";
-import {colorDelete} from "../../consts";
+import {colorDelete} from "../../utils/const/consts";
 
 function SomenteLeitura() {
     return (

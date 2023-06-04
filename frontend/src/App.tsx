@@ -8,6 +8,7 @@ import Register from "./pages/user/register/UserRegister";
 import Home from "./pages/home/Home";
 import React from "react";
 import { Box } from '@mui/system';
+import Details from './pages/details/Details';
 
 // create your theme
 const theme = createTheme({
@@ -26,7 +27,7 @@ function App() {
             <Box
                 display="flex"
                 flexDirection="column"
-                minHeight="100vh"
+                minHeight="90vh"
                 width="100vw"
                 sx={{
                     '& > :nth-of-type(2)': { // targeting the Routes wrapper
@@ -45,15 +46,15 @@ function App() {
                 }}
             >
                 <Header/>
-                <div style={{marginTop: "3%"}}>
+                <div style={{marginTop: '3rem'}}>
                     <Routes>
+                        <Route path="/" element={<Home />} />
                         <Route path={'login'} element={<Login/>} />
                         <Route path={'register'} element={<Register/>} />
                         <Route path={'home'} element={<Home/>}/>
+                        <Route path="/detail/:id" element={<Details/>} />
                     </Routes>
                 </div>
-
-
             </Box>
             <Footer/>
         </ThemeProvider>

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import IconButton from "./IconButton";
-import {colorFont, colorFontW, colorPrimary, colorSave} from "../../consts";
+import {colorFont, colorFontW, colorPrimary, colorSave} from "../../utils/const/consts";
 
 export const IconButtonContainerLink = styled.a`
   display:flex;

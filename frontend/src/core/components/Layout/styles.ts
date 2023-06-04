@@ -1,6 +1,6 @@
 import styled, {keyframes} from "styled-components";
 import {fadeInLeft, fadeInUp} from "react-animations";
-import {colorPrimary, colorSoftGray} from "../../consts";
+import {colorPrimary, colorSoftGray} from "../../utils/const/consts";
 
 export const LayoutContainer = styled.div`
   height: calc(100vh - 50px);

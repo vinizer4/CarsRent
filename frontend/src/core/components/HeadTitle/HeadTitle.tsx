@@ -5,7 +5,7 @@ import Typography from "../CustomText/Typhography";
 import {Tooltip} from "devextreme-react";
 import IconButton from "../Button/IconButton";
 import {AiOutlineArrowLeft} from "react-icons/all";
-import {genGuid} from '../../utils/utils';
+import { genGuid } from '../../utils/utils/utils';
 
 type props = {
     hiddenArrow?: boolean,
