@@ -73,7 +73,7 @@ public class ImageController {
         }
     }
 
-    @GetMapping("/images")
+    @GetMapping("/byids")
     public ResponseEntity<List<ImageDTO>> getImagesByIds(@RequestParam List<Long> imageIds) {
         List<Image> images = imageService.getImagesByIds(imageIds);
         List<ImageDTO> dtos = images.stream().map(Image::toDTO).collect(Collectors.toList());
