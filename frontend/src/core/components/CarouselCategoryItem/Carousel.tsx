@@ -68,7 +68,7 @@ export const CategoryCarousel = ({ categories }: any) => {
                                 border: "none",
                             }}
                         />
-                        <h3 className="category-title">{category.title}</h3>
+                        <h2 className="category-title">{category.qualification}</h2>
                     </SwiperSlide>
                 ))}
             </Swiper>

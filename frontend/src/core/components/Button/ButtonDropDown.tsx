@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, ButtonGroup, Dropdown, DropdownButton} from "react-bootstrap";
-import {colorPrimary, colorSave} from "../../consts";
+import {colorPrimary, colorSave} from "../../utils/const/consts";
 import {ButtonContainer} from "./styes";
 
 type btDD = {

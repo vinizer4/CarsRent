@@ -32,4 +32,9 @@ public class ImageService {
     public void deleteImage(Long id) {
         imageRepository.deleteById(id);
     }
+
+    public List<Image> getImagesByIds(List<Long> imageIds) {
+        return imageRepository.findAllById(imageIds);
+    }
+
 }

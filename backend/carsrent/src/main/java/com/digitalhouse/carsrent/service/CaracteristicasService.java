@@ -36,4 +36,9 @@ public class CaracteristicasService {
     public void deleteCaracteristica(Long id) {
         caracteristicasRepository.deleteById(id);
     }
+
+    public List<Caracteristicas> getCaracteristicasByIds(List<Long> caracteristicasIds) {
+        return caracteristicasRepository.findAllById(caracteristicasIds);
+    }
+
 }

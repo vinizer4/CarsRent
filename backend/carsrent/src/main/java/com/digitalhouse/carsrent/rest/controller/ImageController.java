@@ -72,4 +72,12 @@ public class ImageController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping("/images")
+    public ResponseEntity<List<ImageDTO>> getImagesByIds(@RequestParam List<Long> imageIds) {
+        List<Image> images = imageService.getImagesByIds(imageIds);
+        List<ImageDTO> dtos = images.stream().map(Image::toDTO).collect(Collectors.toList());
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
+    }
+
 }

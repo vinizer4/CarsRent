@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {colorFontW} from "../../consts";
+import {colorFontW} from "../../utils/const/consts";
 
 export const AvatarContainer = styled.div `
   width: 40px;

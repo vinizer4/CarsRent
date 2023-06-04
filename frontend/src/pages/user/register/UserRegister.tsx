@@ -57,7 +57,7 @@ export default function Register() {
     };
 
     return (
-        <Container maxWidth="sm" sx={{ mt: '3rem' }}>
+        <Container maxWidth="sm" sx={{ mt: '8rem' }}>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Box
                     component="form"
@@ -158,7 +158,7 @@ export default function Register() {
                         />
                     </FormControl>
                     <br/>
-                    <Button variant="contained" color="primary" type="submit">
+                    <Button variant="contained" style={{backgroundColor:"red"}} type="submit">
                         Criar Conta
                     </Button>
                     <br/>

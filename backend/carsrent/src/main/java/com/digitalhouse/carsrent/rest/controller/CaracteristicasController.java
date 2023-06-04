@@ -71,4 +71,14 @@ public class CaracteristicasController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping("/byids")
+    public ResponseEntity<List<CaracteristicasGetDTO>> getCaracteristicasByIds(@RequestParam List<Long> caracteristicasIds) {
+        List<Caracteristicas> caracteristicas = caracteristicasService.getCaracteristicasByIds(caracteristicasIds);
+        List<CaracteristicasGetDTO> dtos = caracteristicas.stream()
+                                                          .map(c -> new CaracteristicasGetDTO(c.getId(), c.getNome(), c.getIcone()))
+                                                          .collect(Collectors.toList());
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
+    }
+
 }
