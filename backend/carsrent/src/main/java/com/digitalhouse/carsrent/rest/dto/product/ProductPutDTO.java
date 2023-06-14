@@ -11,12 +11,12 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductPutDTO
-{
+public class ProductPutDTO {
     private Long id;
     private String nome;
     private String descricao;
     private Long categoriaId;
     private Long cidadeId;
     private List<Long> caracteristicasIds;
+//    private List<Long> imagensIds;
 }

@@ -2,95 +2,76 @@ package com.digitalhouse.carsrent.service;
 
 import com.digitalhouse.carsrent.model.*;
 import com.digitalhouse.carsrent.repository.*;
-import com.digitalhouse.carsrent.rest.dto.product.ProductGetDTO;
-import com.digitalhouse.carsrent.rest.dto.product.ProductPostDTO;
-import com.digitalhouse.carsrent.rest.dto.product.ProductPutDTO;
+import com.digitalhouse.carsrent.rest.dto.product.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
 
-    private final ProductRepository productRepository;
-    private final CategoryRepository categoryRepository;
-    private final CidadeRepository cidadeRepository;
-    private final ImageRepository imageRepository;
-    private final CaracteristicasRepository caracteristicasRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     @Autowired
-    public ProductService(ProductRepository productRepository,
-                          CategoryRepository categoryRepository,
-                          CidadeRepository cidadeRepository,
-                          ImageRepository imageRepository,
-                          CaracteristicasRepository caracteristicasRepository) {
-        this.productRepository = productRepository;
-        this.categoryRepository = categoryRepository;
-        this.cidadeRepository = cidadeRepository;
-        this.imageRepository = imageRepository;
-        this.caracteristicasRepository = caracteristicasRepository;
-    }
+    private CategoryRepository categoryRepository;
 
-    public Product fromPostDTO(ProductPostDTO dto) {
+    @Autowired
+    private CidadeRepository cidadeRepository;
+
+    @Autowired
+    private CaracteristicasRepository caracteristicasRepository;
+
+    public Product createProduct(ProductPostDTO dto) {
         Category categoria = categoryRepository.findById(dto.getCategoriaId()).orElse(null);
         Cidade cidade = cidadeRepository.findById(dto.getCidadeId()).orElse(null);
 
         List<Caracteristicas> caracteristicas = dto.getCaracteristicasIds().stream()
-                                                   .map(caracteristicasId -> caracteristicasRepository.findById(caracteristicasId).orElse(null))
-                                                   .collect(Collectors.toList());
-
-        Product product = new Product(dto.getNome(), dto.getDescricao(), categoria, cidade, new ArrayList<>(), caracteristicas);
-
-        return product;
-    }
-
-    public Product fromPutDTO(ProductPutDTO dto) {
-        Category categoria = categoryRepository.findById(dto.getCategoriaId()).orElse(null);
-        Cidade cidade = cidadeRepository.findById(dto.getCidadeId()).orElse(null);
-
-        List<Caracteristicas> caracteristicas = dto.getCaracteristicasIds().stream()
-                                                   .map(caracteristicasId -> caracteristicasRepository.findById(caracteristicasId).orElse(null))
+                                                   .map(caracteristicasRepository::findById)
+                                                   .filter(java.util.Optional::isPresent)
+                                                   .map(java.util.Optional::get)
                                                    .collect(Collectors.toList());
 
         Product product = new Product(dto.getNome(), dto.getDescricao(), categoria, cidade, null, caracteristicas);
-        product.setId(dto.getId());
-
-        return product;
+        return productRepository.save(product);
     }
 
+    public Product updateProduct(ProductPutDTO dto) {
+        Product product = productRepository.findById(dto.getId()).orElse(null);
 
-    public ProductGetDTO toDTO(Product product) {
-        List<Long> imagensIds = product.getImagens().stream().map(Image::getId).collect(Collectors.toList());
-        List<Long> caracteristicasIds = product.getCaracteristicas().stream().map(Caracteristicas::getId).collect(Collectors.toList());
+        if (product != null) {
+            product.setNome(dto.getNome());
+            product.setDescricao(dto.getDescricao());
 
-        return new ProductGetDTO(product.getId(), product.getNome(), product.getDescricao(), product.getCategoria().getId(), product.getCidade().getId(), imagensIds, caracteristicasIds);
-    }
+            Category categoria = categoryRepository.findById(dto.getCategoriaId()).orElse(null);
+            Cidade cidade = cidadeRepository.findById(dto.getCidadeId()).orElse(null);
 
-    public Product findById(Long id) {
-        return productRepository.findById(id).orElse(null);
+            List<Caracteristicas> caracteristicas = dto.getCaracteristicasIds().stream()
+                                                       .map(caracteristicasRepository::findById)
+                                                       .filter(java.util.Optional::isPresent)
+                                                       .map(java.util.Optional::get)
+                                                       .collect(Collectors.toList());
+
+            product.setCategoria(categoria);
+            product.setCidade(cidade);
+            product.setCaracteristicas(caracteristicas);
+
+            return productRepository.save(product);
+        }
+
+        return null;
     }
 
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
-    public Product updateProduct(Product product) {
-        if (productRepository.existsById(product.getId())) {
-            return productRepository.save(product);
-        } else {
-            return null;
-        }
-    }
-
-    public void deleteProduct(Long id) {
-        productRepository.deleteById(id);
-    }
-
-    public Product createProduct(Product product) {
-        return productRepository.save(product);
+    public Optional<Product> getProductById(Long id) {
+        return productRepository.findById(id);
     }
 
     public List<Product> findByCityId(Long cityId) {
@@ -99,5 +80,14 @@ public class ProductService {
 
     public List<Product> findByCategoryId(Long categoryId) {
         return productRepository.findAllByCategoria_Id(categoryId);
+    }
+
+    public Product findById(Long id) {
+        return productRepository.findById(id).orElse(null);
+    }
+
+
+    public void deleteProduct(Long id) {
+        productRepository.deleteById(id);
     }
 }
