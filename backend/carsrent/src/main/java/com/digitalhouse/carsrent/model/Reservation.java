@@ -33,14 +33,16 @@ public class Reservation {
     private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "client_id")
-    private Client client;
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    public Reservation(LocalTime startTime, LocalDate startDate, LocalDate endDate, Product product, Client client) {
+    public Reservation(LocalTime startTime, LocalDate startDate,
+                       LocalDate endDate, Product product,
+                       User user) {
         this.startTime = startTime;
         this.startDate = startDate;
         this.endDate = endDate;
         this.product = product;
-        this.client = client;
+        this.user = user;
     }
 }
