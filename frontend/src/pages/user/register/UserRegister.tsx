@@ -57,7 +57,7 @@ export default function Register() {
     };
 
     return (
-        <Container maxWidth="sm" sx={{ mt: '8rem' }}>
+        <Container maxWidth="sm" sx={{ mt: '8rem' }} style={{marginTop: '2rem'}}>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Box
                     component="form"
@@ -167,6 +167,7 @@ export default function Register() {
                     </Typography>
                 </Box>
             </form>
+            <br/>
         </Container>
     );
 }

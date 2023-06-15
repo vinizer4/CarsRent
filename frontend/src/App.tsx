@@ -9,6 +9,7 @@ import Home from "./pages/home/Home";
 import React from "react";
 import { Box } from '@mui/system';
 import Details from './pages/details/Details';
+import Reserva from './pages/reserva/Reserva';
 
 // create your theme
 const theme = createTheme({
@@ -53,6 +54,7 @@ function App() {
                         <Route path={'register'} element={<Register/>} />
                         <Route path={'home'} element={<Home/>}/>
                         <Route path="/detail/:id" element={<Details/>} />
+                        <Route path={'reserva'} element={<Reserva />} />
                     </Routes>
                 </div>
             </Box>

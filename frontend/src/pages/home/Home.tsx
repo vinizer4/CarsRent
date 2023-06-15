@@ -30,13 +30,10 @@ import Sport from "../../core/assets/sport.png";
 // @ts-ignore
 import Sedan from "../../core/assets/sedan.png"; */
 import CategoryCarousel from "../../core/components/CarouselCategoryItem/Carousel";
-import { colorRed }     from "../../core/utils/const/consts";
-import { ScrollView }   from "devextreme-react";
-import { Link }         from "react-router-dom";
+import { colorRed } from "../../core/utils/const/consts";
+import { ScrollView } from "devextreme-react";
+import { Link } from "react-router-dom";
 import { ImageService } from "../../core/service/image/ImageService";
-import {
-  CategoryInterface
-}                       from "../../core/interface/CategoryInterface";
 
 function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -52,7 +49,7 @@ export default function Home() {
   const { register, handleSubmit, setValue } = useForm();
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [categories, setCategories] = useState<CategoryInterface[]>([]);
+  const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [images, setImages] = useState([]);
 
@@ -210,13 +207,13 @@ export default function Home() {
                     }}
                   >
                     <CardMedia
-                      component="img"
-                      height="194"
-                      loading="lazy"
-                      image={
-                        images.filter((image?) => image?.id === product?.id)[0].url
-                      }
-                      alt={product?.nome}
+                        component="img"
+                        height="194"
+                        loading="lazy"
+                        image={
+                          (images.filter(image => image.produtoId === product.id)[0] || {}).url
+                        }
+                        alt={product.nome}
                     />
                     <CardContent>
                       <Typography variant="h5" component="div">
