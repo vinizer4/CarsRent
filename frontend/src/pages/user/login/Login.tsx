@@ -1,69 +1,77 @@
-import React from 'react';
-import { useForm, Controller } from "react-hook-form";
-import { Link as RouterLink } from "react-router-dom";
-import { UserService } from "../../../core/service/user/UserService";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from 'yup';
+import React, {useContext}                                                from 'react';
+import {Controller, useForm}                                              from "react-hook-form";
+import {Link as RouterLink}                                               from "react-router-dom";
 import {
-    Container,
-    TextField,
-    Button,
-    Typography,
-    Link,
-    Box,
-    FormControl,
-    FormHelperText
-} from '@mui/material';
+    UserService
+}                                                                         from "../../../core/service/user/UserService";
+import {
+    yupResolver
+}                                                                         from "@hookform/resolvers/yup";
+import * as yup                                                           from 'yup';
+import {Box, Button, Container, FormControl, Link, TextField, Typography} from '@mui/material';
+import {
+    AuthContext, useAuth
+}                                                                         from "../../../core/context/authContext";
+import {
+    isSucess,
+    isSucessR
+} from "../../../core/utils/rest/restUtils";
 
-const validationSchema = yup.object().shape({
-    email: yup
-        .string()
-        .email('Email inválido')
-        .required('Email é obrigatório'),
-    password: yup
-        .string()
-        .required('Senha é obrigatória'),
-});
+const validationSchema = yup.object()
+    .shape({
+        email: yup
+            .string()
+            .email('Email inválido')
+            .required('Email é obrigatório'),
+        password: yup
+            .string()
+            .required('Senha é obrigatória'),
+    });
 
 export default function Login() {
     const {
         handleSubmit,
         control,
-        formState: { errors },
+        formState: {errors},
     } = useForm({
         mode: "onBlur",
         resolver: yupResolver(validationSchema),
     });
 
+    const { login } = useAuth();
+
     const onSubmit = async (data: any) => {
         console.log(data);
         try {
             const res = await UserService.Login(data);
-        } catch (error) {
+            if (res && isSucess(res?.status)) {
+                console.log(data)
+                login(res?.data)
+            }
+        }
+        catch (error) {
             console.error(error);
         }
     };
 
     return (
         <Container maxWidth="sm" sx={{ mt: '8rem' }}>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            {/* Pass handleSubmit diretamente para o onSubmit do formulário */}
+            <form onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off">
                 <Box
-                    component="form"
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        '& .MuiTextField-root': { 
+                        '& .MuiTextField-root': {
                             m: 1,
                             width: {
-                              xs: '100%', // Full width on extra small screens
-                              sm: '50ch' // Limited to 50ch on larger screens
-                         }, 
+                                xs: '100%',
+                                sm: '50ch'
+                            },
+                        }
                     }}
-                }
-                    noValidate
-                    autoComplete="off"
                 >
                     <Typography variant="h4" component="h1" gutterBottom>
                         Iniciar Sessão
@@ -99,10 +107,10 @@ export default function Login() {
                                 />}
                         />
                     </FormControl>
-                    <Button style={{marginTop: "1rem", backgroundColor:"red"}} variant="contained" type="submit">
+                    <Button style={{ marginTop: "1rem", backgroundColor: "red" }} variant="contained" type="submit">
                         Entrar
                     </Button>
-                    <br/>
+                    <br />
                     <Typography variant="body2" color="text.secondary">
                         Ainda não tem conta? <Link component={RouterLink} to="/register" color="primary">Registre-se</Link>
                     </Typography>
@@ -111,3 +119,4 @@ export default function Login() {
         </Container>
     );
 }
+

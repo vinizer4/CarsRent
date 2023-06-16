@@ -1,9 +1,11 @@
-import React from 'react';
-import { useForm, Controller } from "react-hook-form";
-import { Link as RouterLink } from "react-router-dom";
-import { UserService } from "../../../core/service/user/UserService";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from 'yup';
+import React                 from 'react';
+import {useForm, Controller} from "react-hook-form";
+import {Link as RouterLink}  from "react-router-dom";
+import {
+    UserService
+}                            from "../../../core/service/user/UserService";
+import {yupResolver}         from "@hookform/resolvers/yup";
+import * as yup              from 'yup';
 import {
     Container,
     TextField,
@@ -13,34 +15,38 @@ import {
     Box,
     FormControl,
     FormHelperText
-} from '@mui/material';
+}                            from '@mui/material';
 
-const validationSchema = yup.object().shape({
-    email: yup
-        .string()
-        .email('Email inválido')
-        .required('Email é obrigatório'),
-    firstName: yup
-        .string()
-        .required('Nome é obrigatório'),
-    lastName: yup
-        .string()
-        .required('Sobrenome é obrigatório'),
-    password: yup
-        .string()
-        .min(8, 'A senha deve ter pelo menos 8 caracteres')
-        .required('Senha é obrigatória'),
-    confirmpassword: yup
-        .string()
-        .oneOf([yup.ref('password'), null], 'As senhas devem corresponder')
-        .required('Confirmação de senha é obrigatória'),
-});
+const validationSchema = yup.object()
+    .shape({
+        email: yup
+            .string()
+            .email('Email inválido')
+            .required('Email é obrigatório'),
+        firstName: yup
+            .string()
+            .required('Nome é obrigatório'),
+        lastName: yup
+            .string()
+            .required('Sobrenome é obrigatório'),
+        password: yup
+            .string()
+            .min(8, 'A senha deve ter pelo menos 8 caracteres')
+            .required('Senha é obrigatória'),
+        confirmpassword: yup
+            .string()
+            .oneOf(
+                [yup.ref('password'), null],
+                'As senhas devem corresponder'
+            )
+            .required('Confirmação de senha é obrigatória'),
+    });
 
 export default function Register() {
     const {
         handleSubmit,
         control,
-        formState: { errors },
+        formState: {errors},
     } = useForm({
         mode: "onBlur",
         resolver: yupResolver(validationSchema),
@@ -50,14 +56,17 @@ export default function Register() {
         console.log(data);
         try {
             const res = await UserService.Login(data);
-            // You can add additional logic after a successful login if necessary
-        } catch (error) {
+            // You can add additional logic after a successful login
+            // if necessary
+        }
+        catch (error) {
             console.error(error);
         }
     };
 
     return (
-        <Container maxWidth="sm" sx={{ mt: '8rem' }} style={{marginTop: '2rem'}}>
+        <Container maxWidth="sm" sx={{mt: '8rem'}}
+                   style={{marginTop: '2rem'}}>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Box
                     component="form"
@@ -69,15 +78,18 @@ export default function Register() {
                         '& .MuiTextField-root': {
                             m: 1,
                             width: {
-                                xs: '100%', // Full width on extra small screens
-                                sm: '50ch' // Limited to 50ch on larger screens
+                                xs: '100%', // Full width on extra
+                                            // small screens
+                                sm: '50ch' // Limited to 50ch on
+                                           // larger screens
                             }
                         },
                     }}
                     noValidate
                     autoComplete="off"
                 >
-                    <Typography variant="h4" component="h1" gutterBottom>
+                    <Typography variant="h4" component="h1"
+                                gutterBottom>
                         Criar Conta
                     </Typography>
                     <FormControl error={!!errors.email}>
@@ -85,12 +97,14 @@ export default function Register() {
                             name="email"
                             control={control}
                             defaultValue=""
-                            render={({ field }) =>
+                            render={({field}) =>
                                 <TextField
                                     {...field}
                                     label="Digite seu e-mail"
                                     error={!!errors.email}
-                                    helperText={errors.email && String(errors.email.message)}
+                                    helperText={errors.email
+                                        && String(
+                                            errors.email.message)}
                                     variant="outlined"
                                 />}
                         />
@@ -100,12 +114,14 @@ export default function Register() {
                             name="firstName"
                             control={control}
                             defaultValue=""
-                            render={({ field }) =>
+                            render={({field}) =>
                                 <TextField
                                     {...field}
                                     label="Nome"
                                     error={!!errors.firstName}
-                                    helperText={errors.firstName && String(errors.firstName.message)}
+                                    helperText={errors.firstName
+                                        && String(
+                                            errors.firstName.message)}
                                     variant="outlined"
                                 />}
                         />
@@ -115,12 +131,14 @@ export default function Register() {
                             name="lastName"
                             control={control}
                             defaultValue=""
-                            render={({ field }) =>
+                            render={({field}) =>
                                 <TextField
                                     {...field}
                                     label="Sobrenome"
                                     error={!!errors.lastName}
-                                    helperText={errors.lastName && String(errors.lastName.message)}
+                                    helperText={errors.lastName
+                                        && String(
+                                            errors.lastName.message)}
                                     variant="outlined"
                                 />}
                         />
@@ -130,13 +148,15 @@ export default function Register() {
                             name="password"
                             control={control}
                             defaultValue=""
-                            render={({ field }) =>
+                            render={({field}) =>
                                 <TextField
                                     {...field}
                                     label="Senha"
                                     type="password"
                                     error={!!errors.password}
-                                    helperText={errors.password && String(errors.password.message)}
+                                    helperText={errors.password
+                                        && String(
+                                            errors.password.message)}
                                     variant="outlined"
                                 />}
                         />
@@ -146,24 +166,32 @@ export default function Register() {
                             name="confirmpassword"
                             control={control}
                             defaultValue=""
-                            render={({ field }) =>
+                            render={({field}) =>
                                 <TextField
                                     {...field}
                                     label="Confirmar Senha"
                                     type="password"
                                     error={!!errors.confirmpassword}
-                                    helperText={errors.confirmpassword && String(errors.confirmpassword.message)}
+                                    helperText={errors.confirmpassword
+                                        && String(
+                                            errors.confirmpassword.message)}
                                     variant="outlined"
                                 />}
                         />
                     </FormControl>
                     <br/>
-                    <Button variant="contained" style={{backgroundColor:"red"}} type="submit">
+                    <Button variant="contained"
+                            style={{backgroundColor: "red"}}
+                            type="submit">
                         Criar Conta
                     </Button>
                     <br/>
-                    <Typography variant="body2" color="text.secondary">
-                        Já tem conta? <Link component={RouterLink} to="/login" color="primary">Iniciar Sessão</Link>
+                    <Typography variant="body2"
+                                color="text.secondary">
+                        Já tem conta? <Link component={RouterLink}
+                                            to="/login"
+                                            color="primary">Iniciar
+                        Sessão</Link>
                     </Typography>
                 </Box>
             </form>
