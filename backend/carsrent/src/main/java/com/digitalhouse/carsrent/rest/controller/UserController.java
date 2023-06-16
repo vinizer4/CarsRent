@@ -1,5 +1,6 @@
 package com.digitalhouse.carsrent.rest.controller;
 
+import com.digitalhouse.carsrent.rest.dto.user.LoginResponseDTO;
 import com.digitalhouse.carsrent.rest.dto.user.UserLoginDTO;
 import com.digitalhouse.carsrent.rest.dto.user.UserDTO;
 import com.digitalhouse.carsrent.model.User;
@@ -25,13 +26,9 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody UserLoginDTO loginDTO) {
-        String jwtToken = userService.loginUser(loginDTO);
-        if (jwtToken != null) {
-            return new ResponseEntity<>(jwtToken, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Invalid email or password", HttpStatus.UNAUTHORIZED);
-        }
+    public ResponseEntity<LoginResponseDTO> loginUser(@RequestBody UserLoginDTO loginDTO) {
+        ResponseEntity<LoginResponseDTO> response = userService.loginUser(loginDTO);
+        return response;
     }
 
     @GetMapping

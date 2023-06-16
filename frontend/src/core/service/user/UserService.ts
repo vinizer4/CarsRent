@@ -95,7 +95,7 @@ export class UserService {
 
             console.log(res.data)
 
-            localStorage.setItem('token', res.data)
+            localStorage.setItem('token', res.data.token)
 
             return res
         }

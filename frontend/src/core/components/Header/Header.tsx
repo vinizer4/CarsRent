@@ -1,23 +1,54 @@
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { colorRed, colorSoftBlack } from "../../utils/const/consts";
-import { AppBar, Button, Drawer, IconButton, List, ListItemButton, Toolbar, Typography, useMediaQuery } from "@mui/material";
-import { useNavigate } from "react-router";
+import React, { useState } from 'react';
+import {
+    AppBar,
+    Avatar,
+    Button,
+    Drawer,
+    IconButton,
+    List,
+    ListItemButton,
+    Popover,
+    Toolbar,
+    Typography,
+    useMediaQuery,
+} from '@mui/material';
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useAuth } from '../../../core/context/authContext'; // Caminho para o useAuth hook
+import { colorRed, colorSoftBlack } from '../../utils/const/consts';
 
 function Header() {
     const navigate = useNavigate();
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
     const isMobile = useMediaQuery('(max-width:600px)');
+    const { user, logout } = useAuth();
 
     const handleDrawerToggle = () => {
         setDrawerOpen(!drawerOpen);
     };
 
+    const handleAvatarClick = (event: any) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handlePopoverClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleLogout = () => {
+        logout();
+        handlePopoverClose();
+    };
+
+    const getUserInitials = (firstName: string, lastName: string) => {
+        return firstName.charAt(0).toUpperCase() + lastName.charAt(0).toUpperCase();
+    };
+
     return (
         <>
-            <AppBar style={{width: "100%", backgroundColor: colorSoftBlack}}>
+            <AppBar style={{ width: '100%', backgroundColor: colorSoftBlack }}>
                 <Toolbar>
                     <IconButton
                         edge="start"
@@ -26,7 +57,7 @@ function Header() {
                         sx={{ width: '5rem', height: '10%', marginRight: '1rem', marginLeft: '1rem' }}
                         onClick={() => navigate('/home')}
                     >
-                        <img style={{width: "7rem"}} alt="Logo" src="../../src/core/assets/images/logo.png" />
+                        <img style={{ width: '7rem' }} alt="Logo" src="../../src/core/assets/images/logo.png" />
                     </IconButton>
                     {!isMobile && (
                         <Typography
@@ -35,13 +66,13 @@ function Header() {
                                 flexGrow: 1,
                                 fontSize: '1.5rem',
                                 transition: 'font-size 0.3s',
-                                marginRight: "2rem",
-                                marginLeft: "1rem",
-                                cursor: 'pointer'
+                                marginRight: '2rem',
+                                marginLeft: '1rem',
+                                cursor: 'pointer',
                             }}
                             onClick={() => navigate('/home')}
                         >
-                            Alugue um carro e viaje <span style={{color: colorRed}}>sem parar</span>
+                            Alugue um carro e viaje <span style={{ color: colorRed }}>sem parar</span>
                         </Typography>
                     )}
                     {isMobile ? (
@@ -55,21 +86,38 @@ function Header() {
                         </IconButton>
                     ) : (
                         <>
-                            <Button
-                                color="inherit"
-                                component={Link}
-                                to="/login"
-                                sx={{ backgroundColor: colorRed, border: `1px solid ${colorRed}`, marginRight: '1rem',
-                                width: { xs: '20vw', sm: '10vw', md: '20vw', lg: '20vw' }
-                            }}
-                            >
-                                Iniciar Sessão
-                            </Button>
-                            <Button color="inherit" component={Link} to="/register"
-                            sx={{width: { xs: '20vw', sm: '10vw', md: '20vw', lg: '20vw'}}}
-                            >
-                                Criar Conta
-                            </Button>
+                            {user ? (
+                                <Avatar
+                                    style={{ backgroundColor: colorRed, marginRight: '1rem' }}
+                                    onClick={handleAvatarClick}
+                                >
+                                    {getUserInitials(user.firstName, user.lastName)}
+                                </Avatar>
+                            ) : (
+                                <>
+                                    <Button
+                                        color="inherit"
+                                        component={Link}
+                                        to="/login"
+                                        sx={{
+                                            backgroundColor: colorRed,
+                                            border: `1px solid ${colorRed}`,
+                                            marginRight: '1rem',
+                                            width: { xs: '20vw', sm: '10vw', md: '20vw', lg: '20vw' },
+                                        }}
+                                    >
+                                        Iniciar Sessão
+                                    </Button>
+                                    <Button
+                                        color="inherit"
+                                        component={Link}
+                                        to="/register"
+                                        sx={{ width: { xs: '20vw', sm: '10vw', md: '20vw', lg: '20vw' } }}
+                                    >
+                                        Criar Conta
+                                    </Button>
+                                </>
+                            )}
                         </>
                     )}
                 </Toolbar>
@@ -94,6 +142,23 @@ function Header() {
                     </ListItemButton>
                 </List>
             </Drawer>
+            <Popover
+                open={Boolean(anchorEl)}
+                anchorEl={anchorEl}
+                onClose={handlePopoverClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+            >
+                <List>
+                    <ListItemButton onClick={handleLogout}>Logout</ListItemButton>
+                </List>
+            </Popover>
         </>
     );
 }
