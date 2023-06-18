@@ -18,27 +18,31 @@ import ArrowBackIosOutlinedIcon          from "@mui/icons-material/ArrowBackIosO
 import {Link}                            from "react-router-dom";
 import NoCrashIcon                       from "@mui/icons-material/NoCrash";
 import AcUnitIcon                        from "@mui/icons-material/AcUnit";
-import AddLocationIcon                   from "@mui/icons-material/AddLocation";
-import {CidadeService}                   from "../../core/service/cidade/CidadeService";
-import {ProductService}                  from "../../core/service/product/ProductService";
-import {ImageService}                    from "../../core/service/image/ImageService";
-import {useParams}                       from "react-router-dom";
-import PrivacyPolicy                     from "../../core/components/CompanyPolicy/CompanyPolicy";
-import {isSucess}                        from "../../core/utils/rest/restUtils";
+import AddLocationIcon   from "@mui/icons-material/AddLocation";
+import {CidadeService}           from "../../core/service/cidade/CidadeService";
+import {ProductService}          from "../../core/service/product/ProductService";
+import {ImageService}            from "../../core/service/image/ImageService";
+import {useParams}               from "react-router-dom";
+import PrivacyPolicy             from "../../core/components/CompanyPolicy/CompanyPolicy";
+import {isSucess}                from "../../core/utils/rest/restUtils";
 import {
     CaracteristicaService
-}                                        from "../../core/service/caracteristicas/CaracteristicaService";
-import {ICaracteristica}                 from "../../core/interface/CaracteristicaInterface";
+}                                from "../../core/service/caracteristicas/CaracteristicaService";
+import {CaracteristicaInterface} from "../../core/interface/CaracteristicaInterface";
+import DateRangePicker           from "../../core/components/DateRangePicker/DateRangePicker";
+import {ProductInterface}        from "../../core/interface/ProductInterface";
+import {ImageInterface}          from "../../core/interface/ImageInterface";
+import {CidadeInterface}         from "../../core/interface/CidadeInterface";
 
 const theme = createTheme();
 
 export default function Details() {
-    const [product, setProduct] = useState([]);
-    const [image, setImage] = useState([]);
-    const [cidade, setCidade] = useState([]);
+    const [product, setProduct] = useState<ProductInterface>();
+    const [image, setImage] = useState<ImageInterface[]>([]);
+    const [cidade, setCidade] = useState<CidadeInterface[]>([]);
     const [nomeProduto, setNomeProduto] = useState("");
     const [descricao, setDescricao] = useState("");
-    const [caracteristicas, setCaracteristicas] = useState([])
+    const [caracteristicas, setCaracteristicas] = useState<CaracteristicaInterface[]>([])
 
     const {id} = useParams();
 
@@ -218,7 +222,7 @@ export default function Details() {
                     component="div"
                     sx={{flexGrow: 1}}
                 >
-                    {product.descricao}
+                    {product?.descricao}
                 </Typography>
                 <Typography
                     text-align="center"
@@ -249,7 +253,7 @@ export default function Details() {
                         marginTop: "2rem",
                     }}
                 >
-                    {caracteristicas.map((caracteristica: ICaracteristica) => (
+                    {caracteristicas.map((caracteristica: CaracteristicaInterface) => (
                         <Box display="flex" alignItems="center">
                             <Box>
                                 <img src={caracteristica.icone} alt={caracteristica.nome}
@@ -262,28 +266,69 @@ export default function Details() {
                             </Box>
                         </Box>
                     ))}
-
                 </div>
-                <div style={{backgroundColor: "rgb(243, 243, 243)"}}>
+
+                <div style={{ backgroundColor: "rgb(243, 243, 243)" }}>
                     <Typography
                         text-align="center"
                         justify-content="center"
-                        margin="2rem"
+                        margin="1rem"
                         variant="h4"
                         component="div"
                         marginTop="1rem"
-                        sx={{flexGrow: 1}}
+                        padding="1rem"
+                        sx={{ flexGrow: 1 }}
                     >
                         Datas disponíveis:
                     </Typography>
-                    <div
-                        style={{backgroundColor: "rgb(243, 243, 243)", height: "19rem"}}
-                    ></div>
+                    <div style={{ display: "flex" }}>
+                        <div
+                            style={{
+                                padding: "1rem",
+                                marginLeft: "1rem",
+                                marginTop: "-1rem",
+                                justifyContent: "left",
+                            }}
+                        >
+                            <DateRangePicker />
+                        </div>
+                        <div>
+                            <div
+                                style={{
+                                    backgroundColor: "white",
+                                    borderRadius: "20px",
+                                    padding: "2rem",
+                                    display: "grid",
+                                    justifyItems: "center",
+                                    marginTop: "6rem",
+                                    marginLeft: "4rem",
+                                    boxShadow: "4px 3px 5px gray",
+                                }}
+                            >
+                                <Typography>
+                                    Adicione as datas da sua reserva para obter informações
+                                    precisas.
+                                </Typography>
+                                <Link to={`/reserva/${product?.id}`}>
+                                    <button
+                                        style={{
+                                            backgroundColor: colorRed,
+                                            color: "white",
+                                            border: "none",
+                                            padding: "0.5rem",
+                                            width: "15rem",
+                                            borderRadius: "10px",
+                                            marginTop: "1rem",
+                                        }}
+                                    >
+                                        Iniciar Reserva
+                                    </button>
+                                </Link>
+                            </div>
+                        </div>
+                        <div style={{ backgroundColor: "rgb(243, 243, 243)" }}></div>
+                    </div>
                 </div>
-
-                {/*     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                 <DateCalendar />
-                 </LocalizationProvider> */}
 
                 <div>
                     <Typography
