@@ -50,43 +50,15 @@ export default function Home() {
     const [filteredProducts, setFilteredProducts] = useState<ProductInterface[]>([])
     const [cidadeSelecionada, setCidadeSelecionada] = useState()
     const [produtoSelecionado, setProdutoSelecionado] = useState()
-
-    // async function getCategories() {
-    //     try {
-    //         const res = await CategoryService.GetAll();
-    //         setCategories(res?.data);
-    //     }
-    //     catch (err) {
-    //         console.log(err);
-    //     }
-    // }
-    //
-    // async function getProducts() {
-    //     try {
-    //         const res = await ProductService.GetAll();
-    //         setProducts(res?.data);
-    //     }
-    //     catch (err) {
-    //         console.log(err);
-    //     }
-    // }
-    //
-    // async function getImages() {
-    //     try {
-    //         const res = await ImageService.GetAll();
-    //         setImages(res?.data);
-    //     }
-    //     catch (err) {
-    //         console.log(err);
-    //     }
-    // }
+    const [dataInicial, setDataInicial] = useState()
+    const [dataFinal, setDataFinal] = useState()
 
     async function handleData() {
         try {
             const [produtos, imagens, cidades, categorias] = await axios.all([
                 ProductService.GetAll(),
                 ImageService.GetAll(),
-                CidadeService.GetAll(),
+                CidadeService.GetAllCityWhereExistsProducts(),
                 CategoryService.GetAll()
             ])
             if (produtos && isSucess(produtos.status)) {
@@ -111,7 +83,7 @@ export default function Home() {
     }
 
     function onSubmit(data: any) {
-        filterCityProduct()
+        filterCityProduct(cidadeSelecionada!)
         //filterModelProduct()
     }
 
@@ -149,10 +121,11 @@ export default function Home() {
         }
     }
 
-    function filterCityProduct() {
+    function filterCityProduct(cidadeId: number) {
+        console.log(products)
         const filteredProductsAux = products.filter(product =>
             String(product.cidadeId)
-                .includes(String(cidadeSelecionada))
+                .includes(String(cidadeId))
         );
 
         console.log(filteredProductsAux)
@@ -206,12 +179,13 @@ export default function Home() {
                                     <Typography>Selecione uma Cidade</Typography>
                                     <TextField
                                         select
+                                        id={"cidade"}
                                         placeholder="Selecione uma Cidade"
                                         fullWidth
                                         value={cidadeSelecionada}
                                         onChange={(e: any) => {
                                             setCidadeSelecionada(e.target.value)
-                                            filterCityProduct()
+                                            filterCityProduct(e.target.value)
                                         }}
                                     >
                                         {cidades.map((cidade) => (
@@ -221,10 +195,26 @@ export default function Home() {
                                         ))}
                                     </TextField>
                                 </Grid>
-                                <Grid item xs={12} md={3}>
-                                    <Typography>Data e Hora</Typography>
+                                <Grid item xs={12} md={2}>
+                                    <Typography>Data Inicial</Typography>
                                     <TextField
-                                        id="date"
+                                        id="dateInit"
+                                        type="datetime-local"
+                                        defaultValue={new Date().toISOString()
+                                            .slice(0, 16)}
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        fullWidth
+                                        onChange={(e) => {
+                                            setValue("date", e.target.value)
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={2}>
+                                    <Typography>Data Final</Typography>
+                                    <TextField
+                                        id="dateEnd"
                                         type="datetime-local"
                                         defaultValue={new Date().toISOString()
                                             .slice(0, 16)}
@@ -241,6 +231,7 @@ export default function Home() {
                                     <Typography>Modelos Disponíveis</Typography>
                                     <TextField
                                         select
+                                        id={"carSelected"}
                                         disabled={!cidadeSelecionada}
                                         placeholder="Qual carro você quer dirigir hoje?"
                                         fullWidth
@@ -256,7 +247,7 @@ export default function Home() {
                                         ))}
                                     </TextField>
                                 </Grid>
-                                <Grid item xs={12} md={3}>
+                                <Grid item xs={12} md={2}>
                                     <Button
                                         type="submit"
                                         variant="contained"

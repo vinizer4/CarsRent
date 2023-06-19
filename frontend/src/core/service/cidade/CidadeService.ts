@@ -28,5 +28,19 @@ export class CidadeService {
             } 
         }
     }
+
+    static async GetAllCityWhereExistsProducts() {
+        try {
+            const res = await api.get('products/cidades-with-products')
+            return res
+        }
+        catch (error: any) {
+            if (error.response && error.response.status === 401) {
+                // TODO: Criar toast de contagem regressiva
+                Toasts.showError({text: "Não foi possível carregar"})
+
+            }
+        }
+    }
    
 }
