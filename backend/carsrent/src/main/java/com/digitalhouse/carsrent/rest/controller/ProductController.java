@@ -1,6 +1,8 @@
 package com.digitalhouse.carsrent.rest.controller;
 
+import com.digitalhouse.carsrent.model.Cidade;
 import com.digitalhouse.carsrent.model.Product;
+import com.digitalhouse.carsrent.rest.dto.cidade.CidadeDTO;
 import com.digitalhouse.carsrent.rest.dto.product.ProductGetDTO;
 import com.digitalhouse.carsrent.rest.dto.product.ProductPostDTO;
 import com.digitalhouse.carsrent.rest.dto.product.ProductPutDTO;
@@ -73,6 +75,15 @@ public class ProductController {
     public ResponseEntity<List<ProductGetDTO>> getProductsByCategory(@PathVariable Long categoryId) {
         List<Product> products = productService.findByCategoryId(categoryId);
         List<ProductGetDTO> dtos = products.stream().map(ProductGetDTO::new).collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("/cidades-with-products")
+    public ResponseEntity<List<CidadeDTO>> getCidadesWithProducts() {
+        List<Cidade> cidades = productService.getCidadesWithProducts();
+        List<CidadeDTO> dtos = cidades.stream().map(cidade -> {
+            return new CidadeDTO(cidade.getId(), cidade.getNome(), cidade.getPais());
+        }).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 

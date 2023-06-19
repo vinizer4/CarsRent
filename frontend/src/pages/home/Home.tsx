@@ -1,5 +1,5 @@
-import React, {useEffect, useState}             from "react";
-import {useForm}                                from "react-hook-form";
+import React, {useEffect, useState} from "react";
+import {useForm}                    from "react-hook-form";
 import {
     Button,
     Card,
@@ -7,32 +7,31 @@ import {
     CardContent,
     createTheme,
     Grid,
-    IconButton, MenuItem,
+    IconButton,
+    MenuItem,
     Snackbar,
     TextField,
     ThemeProvider,
     Typography,
-}                                               from "@mui/material";
-import Box                                      from "@mui/material/Box";
-import MuiAlert, {AlertProps}                   from "@mui/material/Alert";
-import FavoriteIcon                             from "@mui/icons-material/Favorite";
-import {styled}                                 from "@mui/material/styles";
-import CardMedia                                from "@mui/material/CardMedia";
-import {ProductService}                         from "../../core/service/product/ProductService";
-import {CategoryService}                        from "../../core/service/category/CategoryService";
-import CategoryCarousel
-                                                from "../../core/components/CarouselCategoryItem/Carousel";
-import {colorPrimary, colorRed, colorSoftBlack} from "../../core/utils/const/consts";
-import {Link}                                   from "react-router-dom";
-import {ImageService}                           from "../../core/service/image/ImageService";
-import {ImageInterface}                         from "../../core/interface/ImageInterface";
-import {ProductInterface}                       from "../../core/interface/ProductInterface";
-import {CidadeInterface}                        from "../../core/interface/CidadeInterface";
-import axios                                    from "axios";
-import {CidadeService}                          from "../../core/service/cidade/CidadeService";
-import {isSucess}                               from "../../core/utils/rest/restUtils";
-import {Toasts}                                 from "../../core/utils/toast/toasts";
-import {CategoriaInterface}                     from "../../core/interface/CategoryInterface";
+}                                   from "@mui/material";
+import Box                          from "@mui/material/Box";
+import MuiAlert, {AlertProps}       from "@mui/material/Alert";
+import FavoriteIcon                 from "@mui/icons-material/Favorite";
+import CardMedia                    from "@mui/material/CardMedia";
+import {ProductService}             from "../../core/service/product/ProductService";
+import {CategoryService}            from "../../core/service/category/CategoryService";
+import CategoryCarousel             from "../../core/components/CarouselCategoryItem/Carousel";
+import {colorPrimary, colorRed}     from "../../core/utils/const/consts";
+import {Link}                       from "react-router-dom";
+import {ImageService}               from "../../core/service/image/ImageService";
+import {ImageInterface}             from "../../core/interface/ImageInterface";
+import {ProductInterface}           from "../../core/interface/ProductInterface";
+import {CidadeInterface}            from "../../core/interface/CidadeInterface";
+import axios                        from "axios";
+import {CidadeService}              from "../../core/service/cidade/CidadeService";
+import {isSucess}                   from "../../core/utils/rest/restUtils";
+import {Toasts}                     from "../../core/utils/toast/toasts";
+import {CategoriaInterface}         from "../../core/interface/CategoryInterface";
 
 function Alert(props: AlertProps) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -48,10 +47,9 @@ export default function Home() {
     const [products, setProducts] = useState<ProductInterface[]>([]);
     const [cidades, setCidades] = useState<CidadeInterface[]>([])
     const [images, setImages] = useState<ImageInterface[]>([]);
-    const [searchText, setSearchText] = useState("");
     const [filteredProducts, setFilteredProducts] = useState<ProductInterface[]>([])
     const [cidadeSelecionada, setCidadeSelecionada] = useState()
-    const [isFiltered,setIsFiltered] = useState<boolean>(false)
+    const [produtoSelecionado, setProdutoSelecionado] = useState()
 
     // async function getCategories() {
     //     try {
@@ -113,7 +111,14 @@ export default function Home() {
     }
 
     function onSubmit(data: any) {
-        filterProduct()
+        filterCityProduct()
+        //filterModelProduct()
+    }
+
+    function removeFilters() {
+        setProdutoSelecionado(undefined)
+        setCidadeSelecionada(undefined)
+        setFilteredProducts(products)
     }
 
     useEffect(() => {
@@ -129,28 +134,43 @@ export default function Home() {
         setFilteredProducts(products)
     }, [products])
 
-    function filterProduct() {
+    function filterModelProduct() {
         const filteredProductsAux = products.filter(product =>
-            product.nome.toLowerCase()
-                .includes(searchText.toLowerCase())
+            String(product.id)
+                .includes(String(produtoSelecionado))
         );
 
-        setIsFiltered(true)
         console.log(filteredProductsAux)
-        if(filteredProductsAux.length > 0) {
+        if (filteredProductsAux.length > 0) {
             setFilteredProducts(filteredProductsAux)
-        } else if (filteredProductsAux.length === 0) {
+        }
+        else if (filteredProductsAux.length === 0) {
             Toasts.showAlert({text: 'Não existem carros disponiveis para os filtros selecionados!'})
         }
+    }
 
+    function filterCityProduct() {
+        const filteredProductsAux = products.filter(product =>
+            String(product.cidadeId)
+                .includes(String(cidadeSelecionada))
+        );
+
+        console.log(filteredProductsAux)
+        if (filteredProductsAux.length > 0) {
+            setFilteredProducts(filteredProductsAux)
+        }
+        else if (filteredProductsAux.length === 0) {
+            Toasts.showAlert({text: 'Não existem carros disponiveis para os filtros selecionados!'})
+        }
     }
 
     const handleCategoryClick = (categoryId: number) => {
         const filteredProductsAux = products.filter(product => product.categoriaId === categoryId);
 
-        if(filteredProductsAux.length > 0) {
+        if (filteredProductsAux.length > 0) {
             setFilteredProducts(filteredProductsAux)
-        } else if (filteredProductsAux.length === 0) {
+        }
+        else if (filteredProductsAux.length === 0) {
             Toasts.showAlert({text: 'Não existem carros disponiveis para os filtros selecionados!'})
         }
     };
@@ -183,21 +203,16 @@ export default function Home() {
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <Grid container spacing={2} alignItems="center">
                                 <Grid item xs={12} md={3}>
-                                    <Typography>Buscar Modelo</Typography>
-                                    <TextField
-                                        placeholder="Qual carro você quer dirigir hoje?"
-                                        fullWidth
-                                        onChange={(e) => setSearchText(e.target.value)}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} md={3}>
                                     <Typography>Selecione uma Cidade</Typography>
                                     <TextField
                                         select
                                         placeholder="Selecione uma Cidade"
                                         fullWidth
                                         value={cidadeSelecionada}
-                                        onChange={(e: any) => setCidadeSelecionada(e.target.value)}
+                                        onChange={(e: any) => {
+                                            setCidadeSelecionada(e.target.value)
+                                            filterCityProduct()
+                                        }}
                                     >
                                         {cidades.map((cidade) => (
                                             <MenuItem key={cidade.id} value={cidade.id}>
@@ -205,7 +220,6 @@ export default function Home() {
                                             </MenuItem>
                                         ))}
                                     </TextField>
-
                                 </Grid>
                                 <Grid item xs={12} md={3}>
                                     <Typography>Data e Hora</Typography>
@@ -218,8 +232,29 @@ export default function Home() {
                                             shrink: true,
                                         }}
                                         fullWidth
-                                        onChange={(e) => setValue("date", e.target.value)}
+                                        onChange={(e) => {
+                                            setValue("date", e.target.value)
+                                        }}
                                     />
+                                </Grid>
+                                <Grid item xs={12} md={3}>
+                                    <Typography>Modelos Disponíveis</Typography>
+                                    <TextField
+                                        select
+                                        disabled={!cidadeSelecionada}
+                                        placeholder="Qual carro você quer dirigir hoje?"
+                                        fullWidth
+                                        value={produtoSelecionado}
+                                        onChange={(e: any) => {
+                                            setProdutoSelecionado(e.target.value)
+                                        }}
+                                    >
+                                        {filteredProducts.map((produto) => (
+                                            <MenuItem key={produto.id} value={produto.id}>
+                                                {produto.nome}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
                                 </Grid>
                                 <Grid item xs={12} md={3}>
                                     <Button
@@ -239,7 +274,10 @@ export default function Home() {
                                     </Button>
                                     {products.length > 0 &&
                                     filteredProducts.length !== products.length &&
-                                    (!products || !filteredProducts.every((value, index) => value === products[index])) ? (
+                                    (
+                                        !products || !filteredProducts.every(
+                                            (value, index) => value === products[index])
+                                    ) ? (
                                         <Button
                                             variant="contained"
                                             style={{backgroundColor: colorPrimary}}
@@ -250,7 +288,9 @@ export default function Home() {
                                                 marginTop: "1.3rem",
                                                 padding: "0.5rem"
                                             }}
-                                            onClick={() => setFilteredProducts(products)}
+                                            onClick={() => {
+                                                removeFilters()
+                                            }}
                                         >
                                             Remover filtros
                                         </Button>
