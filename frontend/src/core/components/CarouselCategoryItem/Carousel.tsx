@@ -8,10 +8,15 @@ import "swiper/css/autoplay";
 // import required modules
 import { Pagination } from "swiper";
 
-import React from "react";
+import React                from "react";
 import "./category-item.styles.scss";
+import {CategoriaInterface} from "../../interface/CategoryInterface";
 
-export const CategoryCarousel = ({ categories }: any) => {
+type props = {
+    categories: CategoriaInterface[];
+    handleCategoryClick: (categoryId: number) => void;
+}
+export const CategoryCarousel = ({ categories, handleCategoryClick }: props) => {
     return (
         <div>
             <Swiper
@@ -56,18 +61,20 @@ export const CategoryCarousel = ({ categories }: any) => {
                             justifyContent: "center",
                         }}
                     >
-                        <img
-                            className="img"
-                            src={category.imageUrl}
-                            alt={category.title}
-                            style={{
-                                height: "10rem",
-                                width: "17rem",
-                                objectFit: "cover",
-                                outline: "none",
-                                border: "none",
-                            }}
-                        />
+                        <div onClick={() => handleCategoryClick(category.id)}>
+                            <img
+                                className="img"
+                                src={category.imageUrl}
+                                alt={category.title}
+                                style={{
+                                    height: "10rem",
+                                    width: "17rem",
+                                    objectFit: "cover",
+                                    outline: "none",
+                                    border: "none",
+                                }}
+                            />
+                        </div>
                         <h2 className="category-title">{category.qualification}</h2>
                     </SwiperSlide>
                 ))}

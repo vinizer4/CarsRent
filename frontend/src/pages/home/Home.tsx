@@ -7,33 +7,35 @@ import {
     CardContent,
     createTheme,
     Grid,
-    IconButton,
+    IconButton, MenuItem,
     Snackbar,
     TextField,
     ThemeProvider,
     Typography,
-}                                   from "@mui/material";
+} from "@mui/material";
 import Box                    from "@mui/material/Box";
 import MuiAlert, {AlertProps} from "@mui/material/Alert";
-import FavoriteIcon           from "@mui/icons-material/Favorite";
-import {styled}               from "@mui/material/styles";
-import CardMedia              from "@mui/material/CardMedia";
-import {ProductService}       from "../../core/service/product/ProductService";
-import {CategoryService}      from "../../core/service/category/CategoryService";
-import CategoryCarousel       from "../../core/components/CarouselCategoryItem/Carousel";
-import {colorRed}             from "../../core/utils/const/consts";
-import {Link}                 from "react-router-dom";
-import {ImageService}         from "../../core/service/image/ImageService";
-import {ImageInterface}       from "../../core/interface/ImageInterface";
-import {ProductInterface}     from "../../core/interface/ProductInterface";
+import FavoriteIcon       from "@mui/icons-material/Favorite";
+import {styled}           from "@mui/material/styles";
+import CardMedia          from "@mui/material/CardMedia";
+import {ProductService}   from "../../core/service/product/ProductService";
+import {CategoryService}  from "../../core/service/category/CategoryService";
+import CategoryCarousel     from "../../core/components/CarouselCategoryItem/Carousel";
+import {colorRed}           from "../../core/utils/const/consts";
+import {Link}               from "react-router-dom";
+import {ImageService}       from "../../core/service/image/ImageService";
+import {ImageInterface}     from "../../core/interface/ImageInterface";
+import {ProductInterface}   from "../../core/interface/ProductInterface";
+import {CidadeInterface}    from "../../core/interface/CidadeInterface";
+import axios                from "axios";
+import {CidadeService}      from "../../core/service/cidade/CidadeService";
+import {isSucess}           from "../../core/utils/rest/restUtils";
+import {Toasts}             from "../../core/utils/toast/toasts";
+import {CategoriaInterface} from "../../core/interface/CategoryInterface";
 
 function Alert(props: AlertProps) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
-
-const StyledCardMedia = styled(CardMedia)({
-    height: 140,
-});
 
 const theme = createTheme();
 
@@ -41,55 +43,74 @@ export default function Home() {
     const {register, handleSubmit, setValue} = useForm();
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
-    const [categories, setCategories] = useState([]);
+    const [categories, setCategories] = useState<CategoriaInterface[]>([]);
     const [products, setProducts] = useState<ProductInterface[]>([]);
+    const [cidades, setCidades] = useState<CidadeInterface[]>([])
     const [images, setImages] = useState<ImageInterface[]>([]);
+    const [searchText, setSearchText] = useState("");
+    const [filteredProducts, setFilteredProducts] = useState<ProductInterface[]>([])
+    const [cidadeSelecionada, setCidadeSelecionada] = useState()
 
-    async function getCategories() {
+    // async function getCategories() {
+    //     try {
+    //         const res = await CategoryService.GetAll();
+    //         setCategories(res?.data);
+    //     }
+    //     catch (err) {
+    //         console.log(err);
+    //     }
+    // }
+    //
+    // async function getProducts() {
+    //     try {
+    //         const res = await ProductService.GetAll();
+    //         setProducts(res?.data);
+    //     }
+    //     catch (err) {
+    //         console.log(err);
+    //     }
+    // }
+    //
+    // async function getImages() {
+    //     try {
+    //         const res = await ImageService.GetAll();
+    //         setImages(res?.data);
+    //     }
+    //     catch (err) {
+    //         console.log(err);
+    //     }
+    // }
+
+    async function handleData() {
         try {
-            const res = await CategoryService.GetAll();
-            setCategories(res?.data);
+            const [produtos, imagens, cidades, categorias] = await axios.all([
+                ProductService.GetAll(),
+                ImageService.GetAll(),
+                CidadeService.GetAll(),
+                CategoryService.GetAll()
+            ])
+            if (produtos && isSucess(produtos.status)) {
+                setProducts(produtos?.data)
+            }
+            if (imagens && isSucess(imagens.status)) {
+                setImages(imagens?.data)
+            }
+            if (cidades && isSucess(cidades.status)) {
+                setCidades(cidades?.data)
+            }
+            if (categorias && isSucess(categorias.status)) {
+                setCategories(categorias?.data)
+            }
         }
         catch (err) {
-            console.log(err);
-        }
-    }
+            Toasts.showError({text: "Falha ao obter dados!"})
+        } finally {
 
-    async function getProducts() {
-        try {
-            const res = await ProductService.GetAll();
-            setProducts(res?.data);
-        }
-        catch (err) {
-            console.log(err);
-        }
-    }
-
-    async function getImageById(id: any) {
-        try {
-            const res = await ImageService.GetImageById(id);
-            return res?.data.url;
-        }
-        catch (err) {
-            console.log(err);
-        }
-    }
-
-    async function getImages() {
-        try {
-            const res = await ImageService.GetAll();
-            setImages(res?.data);
-        }
-        catch (err) {
-            console.log(err);
         }
     }
 
     function onSubmit(data: any) {
-        setSnackbarMessage(
-            `Dados submetidos. Busca: ${data.search}, Data: ${data.date}`
-        );
-        setOpenSnackbar(true);
+        filterProduct()
     }
 
     useEffect(() => {
@@ -98,10 +119,27 @@ export default function Home() {
     }, [register]);
 
     useEffect(() => {
-        getCategories();
-        getImages();
-        getProducts();
+        handleData()
     }, [])
+
+    useEffect(() => {
+        setFilteredProducts(products)
+    }, [products])
+
+    function filterProduct() {
+        const filteredProducts = products.filter(product =>
+            product.nome.toLowerCase().includes(searchText.toLowerCase())
+        );
+
+        setFilteredProducts(filteredProducts)
+    }
+
+    const handleCategoryClick = (categoryId: number) => {
+        const filtered = products.filter(product => product.categoriaId === categoryId);
+
+        setFilteredProducts(filtered);
+    };
+
 
     const handleCloseSnackbar = (
         event: React.SyntheticEvent<any> | Event,
@@ -134,11 +172,25 @@ export default function Home() {
                                     <TextField
                                         placeholder="Qual carro você quer dirigir hoje?"
                                         fullWidth
+                                        onChange={(e) => setSearchText(e.target.value)}
                                     />
                                 </Grid>
                                 <Grid item xs={12} md={3}>
-                                    <Typography>Onde você está?</Typography>
-                                    <TextField placeholder="Onde você está?" fullWidth/>
+                                    <Typography>Selecione uma Cidade</Typography>
+                                    <TextField
+                                        select
+                                        placeholder="Selecione uma Cidade"
+                                        fullWidth
+                                        value={cidadeSelecionada}
+                                        onChange={(e: any) => setCidadeSelecionada(e.target.value)}
+                                    >
+                                        {cidades.map((cidade) => (
+                                            <MenuItem key={cidade.id} value={cidade.id}>
+                                                {cidade.nome}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
+
                                 </Grid>
                                 <Grid item xs={12} md={3}>
                                     <Typography>Data e Hora</Typography>
@@ -175,7 +227,7 @@ export default function Home() {
                         </form>
                     </div>
 
-                    <CategoryCarousel categories={categories}/>
+                    <CategoryCarousel categories={categories} handleCategoryClick={handleCategoryClick}/>
 
                     <div style={{backgroundColor: "rgb(243, 243, 243)"}}>
                         <Typography
@@ -189,7 +241,7 @@ export default function Home() {
                             spacing={2}
                             style={{marginTop: "1rem"}}
                         >
-                            {products.map((product, i) => (
+                            {filteredProducts.map((product, i) => (
                                 <Grid
                                     style={{justifyContent: "center", display: "flex"}}
                                     item
