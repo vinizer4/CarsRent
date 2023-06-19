@@ -1,16 +1,18 @@
 import {ThemeProvider, createTheme} from '@mui/material/styles';
 import CssBaseline                  from '@mui/material/CssBaseline';
-import Footer                       from "./core/components/Footer/Footer";
-import Header                       from "./core/components/Header/Header";
-import {Route, Routes}              from "react-router-dom";
-import Login                        from "./pages/user/login/Login";
-import Register                     from "./pages/user/register/UserRegister";
-import Home                         from "./pages/home/Home";
-import React                        from "react";
-import {Box}                        from '@mui/system';
-import Details                      from './pages/details/Details';
-import Reserva                      from './pages/reserva/Reserva';
-import {AuthProvider}               from "./core/context/authContext";
+import Footer           from "./core/components/Footer/Footer";
+import Header           from "./core/components/Header/Header";
+import {Route, Routes}  from "react-router-dom";
+import Login            from "./pages/user/login/Login";
+import Register         from "./pages/user/register/UserRegister";
+import Home             from "./pages/home/Home";
+import React            from "react";
+import {Box}            from '@mui/system';
+import Details          from './pages/details/Details';
+import Reserva          from './pages/reserva/Reserva';
+import {AuthProvider}   from "./core/context/authContext";
+import {ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const theme = createTheme({
@@ -22,6 +24,7 @@ const theme = createTheme({
 function App() {
     return (
         <ThemeProvider theme={theme}>
+            <ToastContainer />
             <AuthProvider>
                 <CssBaseline/>
                 <Box

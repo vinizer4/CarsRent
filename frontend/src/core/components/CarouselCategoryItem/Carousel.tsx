@@ -8,7 +8,7 @@ import "swiper/css/autoplay";
 // import required modules
 import { Pagination } from "swiper";
 
-import React                from "react";
+import React, {useState} from "react";
 import "./category-item.styles.scss";
 import {CategoriaInterface} from "../../interface/CategoryInterface";
 
@@ -17,6 +17,15 @@ type props = {
     handleCategoryClick: (categoryId: number) => void;
 }
 export const CategoryCarousel = ({ categories, handleCategoryClick }: props) => {
+    const [activeIndex, setActiveIndex] = useState(null);
+
+    const handleClick = (index: any, categoryId: number) => {
+        setActiveIndex(index);
+        handleCategoryClick(categoryId);
+
+        // Remove o estado de ativo após um curto período de tempo
+        setTimeout(() => setActiveIndex(null), 300);
+    };
     return (
         <div>
             <Swiper
@@ -61,7 +70,10 @@ export const CategoryCarousel = ({ categories, handleCategoryClick }: props) => 
                             justifyContent: "center",
                         }}
                     >
-                        <div onClick={() => handleCategoryClick(category.id)}>
+                        <div
+                            className={`category-item ${activeIndex === index ? 'active' : ''}`}
+                            onClick={() => handleClick(index, category.id)}
+                        >
                             <img
                                 className="img"
                                 src={category.imageUrl}

@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {useForm}                    from "react-hook-form";
+import React, {useEffect, useState}             from "react";
+import {useForm}                                from "react-hook-form";
 import {
     Button,
     Card,
@@ -12,26 +12,27 @@ import {
     TextField,
     ThemeProvider,
     Typography,
-} from "@mui/material";
-import Box                    from "@mui/material/Box";
-import MuiAlert, {AlertProps} from "@mui/material/Alert";
-import FavoriteIcon       from "@mui/icons-material/Favorite";
-import {styled}           from "@mui/material/styles";
-import CardMedia          from "@mui/material/CardMedia";
-import {ProductService}   from "../../core/service/product/ProductService";
-import {CategoryService}  from "../../core/service/category/CategoryService";
-import CategoryCarousel     from "../../core/components/CarouselCategoryItem/Carousel";
-import {colorRed}           from "../../core/utils/const/consts";
-import {Link}               from "react-router-dom";
-import {ImageService}       from "../../core/service/image/ImageService";
-import {ImageInterface}     from "../../core/interface/ImageInterface";
-import {ProductInterface}   from "../../core/interface/ProductInterface";
-import {CidadeInterface}    from "../../core/interface/CidadeInterface";
-import axios                from "axios";
-import {CidadeService}      from "../../core/service/cidade/CidadeService";
-import {isSucess}           from "../../core/utils/rest/restUtils";
-import {Toasts}             from "../../core/utils/toast/toasts";
-import {CategoriaInterface} from "../../core/interface/CategoryInterface";
+}                                               from "@mui/material";
+import Box                                      from "@mui/material/Box";
+import MuiAlert, {AlertProps}                   from "@mui/material/Alert";
+import FavoriteIcon                             from "@mui/icons-material/Favorite";
+import {styled}                                 from "@mui/material/styles";
+import CardMedia                                from "@mui/material/CardMedia";
+import {ProductService}                         from "../../core/service/product/ProductService";
+import {CategoryService}                        from "../../core/service/category/CategoryService";
+import CategoryCarousel
+                                                from "../../core/components/CarouselCategoryItem/Carousel";
+import {colorPrimary, colorRed, colorSoftBlack} from "../../core/utils/const/consts";
+import {Link}                                   from "react-router-dom";
+import {ImageService}                           from "../../core/service/image/ImageService";
+import {ImageInterface}                         from "../../core/interface/ImageInterface";
+import {ProductInterface}                       from "../../core/interface/ProductInterface";
+import {CidadeInterface}                        from "../../core/interface/CidadeInterface";
+import axios                                    from "axios";
+import {CidadeService}                          from "../../core/service/cidade/CidadeService";
+import {isSucess}                               from "../../core/utils/rest/restUtils";
+import {Toasts}                                 from "../../core/utils/toast/toasts";
+import {CategoriaInterface}                     from "../../core/interface/CategoryInterface";
 
 function Alert(props: AlertProps) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -50,6 +51,7 @@ export default function Home() {
     const [searchText, setSearchText] = useState("");
     const [filteredProducts, setFilteredProducts] = useState<ProductInterface[]>([])
     const [cidadeSelecionada, setCidadeSelecionada] = useState()
+    const [isFiltered,setIsFiltered] = useState<boolean>(false)
 
     // async function getCategories() {
     //     try {
@@ -104,7 +106,8 @@ export default function Home() {
         }
         catch (err) {
             Toasts.showError({text: "Falha ao obter dados!"})
-        } finally {
+        }
+        finally {
 
         }
     }
@@ -127,17 +130,29 @@ export default function Home() {
     }, [products])
 
     function filterProduct() {
-        const filteredProducts = products.filter(product =>
-            product.nome.toLowerCase().includes(searchText.toLowerCase())
+        const filteredProductsAux = products.filter(product =>
+            product.nome.toLowerCase()
+                .includes(searchText.toLowerCase())
         );
 
-        setFilteredProducts(filteredProducts)
+        setIsFiltered(true)
+        console.log(filteredProductsAux)
+        if(filteredProductsAux.length > 0) {
+            setFilteredProducts(filteredProductsAux)
+        } else if (filteredProductsAux.length === 0) {
+            Toasts.showAlert({text: 'Não existem carros disponiveis para os filtros selecionados!'})
+        }
+
     }
 
     const handleCategoryClick = (categoryId: number) => {
-        const filtered = products.filter(product => product.categoriaId === categoryId);
+        const filteredProductsAux = products.filter(product => product.categoriaId === categoryId);
 
-        setFilteredProducts(filtered);
+        if(filteredProductsAux.length > 0) {
+            setFilteredProducts(filteredProductsAux)
+        } else if (filteredProductsAux.length === 0) {
+            Toasts.showAlert({text: 'Não existem carros disponiveis para os filtros selecionados!'})
+        }
     };
 
 
@@ -222,12 +237,31 @@ export default function Home() {
                                     >
                                         Buscar
                                     </Button>
+                                    {products.length > 0 &&
+                                    filteredProducts.length !== products.length &&
+                                    (!products || !filteredProducts.every((value, index) => value === products[index])) ? (
+                                        <Button
+                                            variant="contained"
+                                            style={{backgroundColor: colorPrimary}}
+                                            fullWidth
+                                            sx={{
+                                                display: "flex",
+                                                justifyContent: "center",
+                                                marginTop: "1.3rem",
+                                                padding: "0.5rem"
+                                            }}
+                                            onClick={() => setFilteredProducts(products)}
+                                        >
+                                            Remover filtros
+                                        </Button>
+                                    ) : null}
                                 </Grid>
                             </Grid>
                         </form>
                     </div>
 
-                    <CategoryCarousel categories={categories} handleCategoryClick={handleCategoryClick}/>
+                    <CategoryCarousel categories={categories}
+                                      handleCategoryClick={handleCategoryClick}/>
 
                     <div style={{backgroundColor: "rgb(243, 243, 243)"}}>
                         <Typography
