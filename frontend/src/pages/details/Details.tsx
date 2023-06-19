@@ -1,56 +1,74 @@
-import * as React                        from "react";
-import {useEffect, useState}             from "react";
-import AppBar                            from "@mui/material/AppBar";
-import Box                               from "@mui/material/Box";
-import Toolbar                           from "@mui/material/Toolbar";
-import Typography                        from "@mui/material/Typography";
-import Button                            from "@mui/material/Button";
-import {createTheme}                     from "@mui/material/styles";
-import {ThemeProvider, IconButton, Grid} from "@mui/material";
-import {colorRed}                        from "../../core/utils/const/consts";
-import FavoriteIcon                      from "@mui/icons-material/Favorite";
-import ShareIcon                         from "@mui/icons-material/Share";
-import StarIcon                          from "@mui/icons-material/Star";
-import StarBorderOutlinedIcon            from "@mui/icons-material/StarBorderOutlined";
-import PlaceOutlinedIcon                 from "@mui/icons-material/PlaceOutlined";
-import {colorSoftBlack}                  from "../../core/utils/const/consts";
-import ArrowBackIosOutlinedIcon          from "@mui/icons-material/ArrowBackIosOutlined";
-import {Link}                            from "react-router-dom";
-import NoCrashIcon                       from "@mui/icons-material/NoCrash";
-import AcUnitIcon                        from "@mui/icons-material/AcUnit";
-import AddLocationIcon   from "@mui/icons-material/AddLocation";
-import {CidadeService}           from "../../core/service/cidade/CidadeService";
-import {ProductService}          from "../../core/service/product/ProductService";
-import {ImageService}            from "../../core/service/image/ImageService";
-import {useParams}               from "react-router-dom";
-import PrivacyPolicy             from "../../core/components/CompanyPolicy/CompanyPolicy";
-import {isSucess}                from "../../core/utils/rest/restUtils";
+import * as React                                   from "react";
+import {useEffect, useState}                        from "react";
+import AppBar                                       from "@mui/material/AppBar";
+import Box                                          from "@mui/material/Box";
+import Toolbar                                      from "@mui/material/Toolbar";
+import Typography                                   from "@mui/material/Typography";
+import {createTheme}                                from "@mui/material/styles";
+import {Grid, IconButton, TextField, ThemeProvider} from "@mui/material";
+import {colorRed, colorSoftBlack}                   from "../../core/utils/const/consts";
+import FavoriteIcon                                 from "@mui/icons-material/Favorite";
+import ShareIcon                                    from "@mui/icons-material/Share";
+import StarIcon                                     from "@mui/icons-material/Star";
+import StarBorderOutlinedIcon                       from "@mui/icons-material/StarBorderOutlined";
+import PlaceOutlinedIcon                            from "@mui/icons-material/PlaceOutlined";
+import ArrowBackIosOutlinedIcon                     from "@mui/icons-material/ArrowBackIosOutlined";
+import {Link, useLocation, useParams}               from "react-router-dom";
+import {CidadeService}                              from "../../core/service/cidade/CidadeService";
+import {
+    ProductService
+}                                                   from "../../core/service/product/ProductService";
+import {ImageService}                               from "../../core/service/image/ImageService";
+import PrivacyPolicy
+                                                    from "../../core/components/CompanyPolicy/CompanyPolicy";
+import {isSucess}                                   from "../../core/utils/rest/restUtils";
 import {
     CaracteristicaService
-}                                from "../../core/service/caracteristicas/CaracteristicaService";
-import {CaracteristicaInterface} from "../../core/interface/CaracteristicaInterface";
-import DateRangePicker           from "../../core/components/DateRangePicker/DateRangePicker";
-import {ProductInterface}        from "../../core/interface/ProductInterface";
-import {ImageInterface}          from "../../core/interface/ImageInterface";
-import {CidadeInterface}         from "../../core/interface/CidadeInterface";
+}                                                   from "../../core/service/caracteristicas/CaracteristicaService";
+import {
+    CaracteristicaInterface
+}                                                   from "../../core/interface/CaracteristicaInterface";
+import {ProductInterface}                           from "../../core/interface/ProductInterface";
+import {ImageInterface}                             from "../../core/interface/ImageInterface";
+import {CidadeInterface}                            from "../../core/interface/CidadeInterface";
+import {
+    ReservationInterface
+}                                                   from "../../core/interface/ReservationInterface";
+import {
+    ReservationService
+}                                                   from "../../core/service/reservation/ReservationService";
+import {DatePicker, LocalizationProvider}           from '@mui/lab';
+import AdapterDateFns                               from '@mui/lab/AdapterDateFns';
 
 const theme = createTheme();
 
 export default function Details() {
+
+    const location = useLocation();
+    const {cidadeSelecionadaAux, produtoSelecionado, dataInicial, dataFinal} = location.state || {};
     const [product, setProduct] = useState<ProductInterface>();
     const [image, setImage] = useState<ImageInterface[]>([]);
-    const [cidade, setCidade] = useState<CidadeInterface[]>([]);
-    const [nomeProduto, setNomeProduto] = useState("");
-    const [descricao, setDescricao] = useState("");
+    const [cidade, setCidade] = useState<CidadeInterface>(cidadeSelecionadaAux);
     const [caracteristicas, setCaracteristicas] = useState<CaracteristicaInterface[]>([])
+    const [reservas, setReservas] = useState<ReservationInterface[]>([]);
+    const [selectedCheckInDate, setSelectedCheckInDate] = useState(new Date());
+    const [selectedCheckOutDate, setSelectedCheckOutDate] = useState(new Date());
+    const [disabledDates, setDisabledDates] = useState<any>()
+
+    console.log(cidadeSelecionadaAux)
+    console.log(produtoSelecionado)
+    console.log(dataInicial)
+    console.log(dataFinal)
 
     const {id} = useParams();
 
     async function getProductById(id: any) {
+        let produto
         try {
             const res = await ProductService.GetProductById(id);
             if (res && isSucess(res?.status)) {
                 setProduct(res?.data);
+                produto = res?.data
                 const caracteristicas = await CaracteristicaService.GetCaracteristicasByIds(
                     res?.data.caracteristicasIds)
 
@@ -58,11 +76,16 @@ export default function Details() {
                     console.log(caracteristicas)
                     setCaracteristicas(caracteristicas?.data)
                 }
-            }
 
+
+            }
         }
         catch (err) {
             console.log(err);
+        }
+        finally {
+            getCidadeById(produto.cidadeId)
+            await getReservasByProductId(id)
         }
     }
 
@@ -73,6 +96,33 @@ export default function Details() {
         }
         catch (err) {
             console.log(err);
+        }
+    }
+
+    async function getReservasByProductId(id: any) {
+        let reservasAux: ReservationInterface[] = []
+        try {
+            const res = await ReservationService.GetByProductId(id);
+            setReservas(res?.data);
+        }
+        catch (err) {
+            console.log(err);
+        }
+
+        if (reservasAux.length > 0) {
+            const disabledDates = reservasAux.map((reserva) => {
+                const start = new Date(reserva.startDate);
+                const end = new Date(reserva.endDate);
+                const dates = [];
+                for (let dt = start; dt <= end; dt.setDate(dt.getDate() + 1)) {
+                    dates.push(new Date(dt));
+                }
+                return dates;
+            }).flat();
+
+            console.log(disabledDates)
+            setDisabledDates(disabledDates)
+
         }
     }
 
@@ -87,10 +137,12 @@ export default function Details() {
     }
 
     useEffect(() => {
-        getCidadeById(id);
         getProductById(id);
         getImageById(id);
     }, []);
+
+
+
 
     return (
         <>
@@ -122,7 +174,7 @@ export default function Details() {
                                 component="div"
                                 sx={{flexGrow: 1, marginLeft: "1rem"}}
                             >
-                                {cidade.nome} - {cidade.pais}
+                                {cidade?.nome} - {cidade?.pais}
                             </Typography>
                             <div style={{display: "flex"}}>
                                 <div style={{display: "grid"}}>
@@ -268,7 +320,7 @@ export default function Details() {
                     ))}
                 </div>
 
-                <div style={{ backgroundColor: "rgb(243, 243, 243)" }}>
+                <div style={{backgroundColor: "rgb(243, 243, 243)"}}>
                     <Typography
                         text-align="center"
                         justify-content="center"
@@ -277,11 +329,11 @@ export default function Details() {
                         component="div"
                         marginTop="1rem"
                         padding="1rem"
-                        sx={{ flexGrow: 1 }}
+                        sx={{flexGrow: 1}}
                     >
                         Datas disponíveis:
                     </Typography>
-                    <div style={{ display: "flex" }}>
+                    <div style={{display: "flex"}}>
                         <div
                             style={{
                                 padding: "1rem",
@@ -290,7 +342,24 @@ export default function Details() {
                                 justifyContent: "left",
                             }}
                         >
-                            <DateRangePicker />
+                            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                <DatePicker
+                                    label="Check-In"
+                                    value={selectedCheckInDate}
+                                    onChange={(newValue: any) => setSelectedCheckInDate(newValue)}
+                                    renderInput={(params: any) => <TextField {...params} />}
+                                    // shouldDisableDate={(date: any) => disabledDates.some(
+                                    //     disabledDate => disabledDate.getTime() === date.getTime())}
+                                />
+                                <DatePicker
+                                    label="Check-Out"
+                                    value={selectedCheckOutDate}
+                                    onChange={(newValue: any) => setSelectedCheckOutDate(newValue)}
+                                    renderInput={(params: any) => <TextField {...params} />}
+                                    // shouldDisableDate={(date: any) => disabledDates.some(
+                                    //     disabledDate => disabledDate.getTime() === date.getTime())}
+                                />
+                            </LocalizationProvider>
                         </div>
                         <div>
                             <div
@@ -326,7 +395,7 @@ export default function Details() {
                                 </Link>
                             </div>
                         </div>
-                        <div style={{ backgroundColor: "rgb(243, 243, 243)" }}></div>
+                        <div style={{backgroundColor: "rgb(243, 243, 243)"}}></div>
                     </div>
                 </div>
 

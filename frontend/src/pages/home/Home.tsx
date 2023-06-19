@@ -21,17 +21,18 @@ import CardMedia                    from "@mui/material/CardMedia";
 import {ProductService}             from "../../core/service/product/ProductService";
 import {CategoryService}            from "../../core/service/category/CategoryService";
 import CategoryCarousel             from "../../core/components/CarouselCategoryItem/Carousel";
-import {colorPrimary, colorRed}     from "../../core/utils/const/consts";
-import {Link}                       from "react-router-dom";
-import {ImageService}               from "../../core/service/image/ImageService";
-import {ImageInterface}             from "../../core/interface/ImageInterface";
-import {ProductInterface}           from "../../core/interface/ProductInterface";
-import {CidadeInterface}            from "../../core/interface/CidadeInterface";
-import axios                        from "axios";
-import {CidadeService}              from "../../core/service/cidade/CidadeService";
-import {isSucess}                   from "../../core/utils/rest/restUtils";
-import {Toasts}                     from "../../core/utils/toast/toasts";
-import {CategoriaInterface}         from "../../core/interface/CategoryInterface";
+import {colorPrimary, colorRed} from "../../core/utils/const/consts";
+import {Link}                   from "react-router-dom";
+import {ImageService}           from "../../core/service/image/ImageService";
+import {ImageInterface}         from "../../core/interface/ImageInterface";
+import {ProductInterface}       from "../../core/interface/ProductInterface";
+import {CidadeInterface}        from "../../core/interface/CidadeInterface";
+import axios                    from "axios";
+import {CidadeService}          from "../../core/service/cidade/CidadeService";
+import {isSucess}               from "../../core/utils/rest/restUtils";
+import {Toasts}                 from "../../core/utils/toast/toasts";
+import {CategoriaInterface}     from "../../core/interface/CategoryInterface";
+import {useNavigate}            from "react-router";
 
 function Alert(props: AlertProps) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -40,7 +41,7 @@ function Alert(props: AlertProps) {
 const theme = createTheme();
 
 export default function Home() {
-    const {register, handleSubmit, setValue} = useForm();
+    const {register, handleSubmit, setValue, getValues} = useForm();
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const [categories, setCategories] = useState<CategoriaInterface[]>([]);
@@ -50,8 +51,17 @@ export default function Home() {
     const [filteredProducts, setFilteredProducts] = useState<ProductInterface[]>([])
     const [cidadeSelecionada, setCidadeSelecionada] = useState()
     const [produtoSelecionado, setProdutoSelecionado] = useState()
-    const [dataInicial, setDataInicial] = useState()
-    const [dataFinal, setDataFinal] = useState()
+
+    const navigate = useNavigate();
+
+    const handleNavigateToDetails = (product: any) => {
+        console.log(product)
+        const cidadeSelecionadaAux = cidades.filter(cidade => cidade.id === cidadeSelecionada);
+        const dataInicial = getValues('dateInit')
+        const dataFinal =  getValues('dateEnd')
+        console.log(cidadeSelecionadaAux, produtoSelecionado, dataInicial, dataFinal);
+        navigate(`/detail/${product}`, { state: { cidadeSelecionadaAux, produtoSelecionado, dataInicial, dataFinal } });
+    };
 
     async function handleData() {
         try {
@@ -83,7 +93,7 @@ export default function Home() {
     }
 
     function onSubmit(data: any) {
-        filterCityProduct(cidadeSelecionada!)
+        console.log(data)
         //filterModelProduct()
     }
 
@@ -92,11 +102,6 @@ export default function Home() {
         setCidadeSelecionada(undefined)
         setFilteredProducts(products)
     }
-
-    useEffect(() => {
-        register("date");
-        // manually register date
-    }, [register]);
 
     useEffect(() => {
         handleData()
@@ -179,6 +184,7 @@ export default function Home() {
                                     <Typography>Selecione uma Cidade</Typography>
                                     <TextField
                                         select
+                                        {...register("cidade")}
                                         id={"cidade"}
                                         placeholder="Selecione uma Cidade"
                                         fullWidth
@@ -199,6 +205,7 @@ export default function Home() {
                                     <Typography>Data Inicial</Typography>
                                     <TextField
                                         id="dateInit"
+                                        {...register("dateInit")}
                                         type="datetime-local"
                                         defaultValue={new Date().toISOString()
                                             .slice(0, 16)}
@@ -207,7 +214,7 @@ export default function Home() {
                                         }}
                                         fullWidth
                                         onChange={(e) => {
-                                            setValue("date", e.target.value)
+                                            setValue("dateInit", e.target.value)
                                         }}
                                     />
                                 </Grid>
@@ -215,6 +222,7 @@ export default function Home() {
                                     <Typography>Data Final</Typography>
                                     <TextField
                                         id="dateEnd"
+                                        {...register("dateEnd")}
                                         type="datetime-local"
                                         defaultValue={new Date().toISOString()
                                             .slice(0, 16)}
@@ -223,7 +231,7 @@ export default function Home() {
                                         }}
                                         fullWidth
                                         onChange={(e) => {
-                                            setValue("date", e.target.value)
+                                            setValue("dateEnd", e.target.value)
                                         }}
                                     />
                                 </Grid>
@@ -232,6 +240,7 @@ export default function Home() {
                                     <TextField
                                         select
                                         id={"carSelected"}
+                                        {...register("carSelected")}
                                         disabled={!cidadeSelecionada}
                                         placeholder="Qual carro você quer dirigir hoje?"
                                         fullWidth
@@ -345,12 +354,8 @@ export default function Home() {
                                         <CardActions>
                                             <Button size="small">Ver no mapa</Button>
                                             <Button size="small">Alugar</Button>
-                                            <Button size="small">
-                                                <Link style={{textDecoration: "none"}}
-                                                      to={`/detail/${product?.id}`}>
-                                                    {" "}
-                                                    Ver Detalhes{" "}
-                                                </Link>
+                                            <Button size="small" onClick={() => handleNavigateToDetails(product?.id)}>
+                                                Detalhes
                                             </Button>
                                             <IconButton aria-label="Favoritar">
                                                 <FavoriteIcon/>
