@@ -12,8 +12,8 @@ import java.time.LocalDate;
 @Setter
 public class ReservationGetDTO {
     private Long id;
-    private Long user;
-    private Product product;
+    private Long userId;
+    private Long productId;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -21,4 +21,5 @@ public class ReservationGetDTO {
     @JsonFormat(pattern = "HH:mm:ss")
     private String startTime;
 }
+
 

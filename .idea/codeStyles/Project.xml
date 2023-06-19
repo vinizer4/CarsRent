@@ -1,6 +1,6 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
-    <option name="RIGHT_MARGIN" value="70" />
+    <option name="RIGHT_MARGIN" value="100" />
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="true" />
     <DBN-PSQL>
       <case-options enabled="true">
@@ -57,7 +57,7 @@
       <option name="ENABLED" value="false" />
     </editorconfig>
     <codeStyleSettings language="JAVA">
-      <option name="RIGHT_MARGIN" value="70" />
+      <option name="RIGHT_MARGIN" value="100" />
       <option name="BRACE_STYLE" value="2" />
       <option name="CLASS_BRACE_STYLE" value="2" />
       <option name="METHOD_BRACE_STYLE" value="2" />
@@ -100,7 +100,7 @@
       <option name="WRAP_ON_TYPING" value="1" />
     </codeStyleSettings>
     <codeStyleSettings language="JavaScript">
-      <option name="RIGHT_MARGIN" value="70" />
+      <option name="RIGHT_MARGIN" value="100" />
       <option name="ELSE_ON_NEW_LINE" value="true" />
       <option name="WHILE_ON_NEW_LINE" value="true" />
       <option name="CATCH_ON_NEW_LINE" value="true" />
@@ -156,7 +156,7 @@
       </indentOptions>
     </codeStyleSettings>
     <codeStyleSettings language="TypeScript">
-      <option name="RIGHT_MARGIN" value="70" />
+      <option name="RIGHT_MARGIN" value="100" />
       <option name="KEEP_FIRST_COLUMN_COMMENT" value="false" />
       <option name="ELSE_ON_NEW_LINE" value="true" />
       <option name="WHILE_ON_NEW_LINE" value="true" />

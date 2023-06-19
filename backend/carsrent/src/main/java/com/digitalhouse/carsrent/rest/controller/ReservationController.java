@@ -33,8 +33,12 @@ public class ReservationController {
     @GetMapping("/product/{productId}")
     public ResponseEntity<List<ReservationGetDTO>> getReservationsByProductId(@PathVariable Long productId) {
         List<ReservationGetDTO> reservations = reservationService.getReservationsByProductId(productId);
+        if (reservations.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(reservations);
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> cancelReservation(@PathVariable Long id) {

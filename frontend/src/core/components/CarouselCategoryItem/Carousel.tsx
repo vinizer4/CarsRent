@@ -8,10 +8,24 @@ import "swiper/css/autoplay";
 // import required modules
 import { Pagination } from "swiper";
 
-import React from "react";
+import React, {useState} from "react";
 import "./category-item.styles.scss";
+import {CategoriaInterface} from "../../interface/CategoryInterface";
 
-export const CategoryCarousel = ({ categories }: any) => {
+type props = {
+    categories: CategoriaInterface[];
+    handleCategoryClick: (categoryId: number) => void;
+}
+export const CategoryCarousel = ({ categories, handleCategoryClick }: props) => {
+    const [activeIndex, setActiveIndex] = useState(null);
+
+    const handleClick = (index: any, categoryId: number) => {
+        setActiveIndex(index);
+        handleCategoryClick(categoryId);
+
+        // Remove o estado de ativo após um curto período de tempo
+        setTimeout(() => setActiveIndex(null), 300);
+    };
     return (
         <div>
             <Swiper
@@ -56,18 +70,23 @@ export const CategoryCarousel = ({ categories }: any) => {
                             justifyContent: "center",
                         }}
                     >
-                        <img
-                            className="img"
-                            src={category.imageUrl}
-                            alt={category.title}
-                            style={{
-                                height: "10rem",
-                                width: "17rem",
-                                objectFit: "cover",
-                                outline: "none",
-                                border: "none",
-                            }}
-                        />
+                        <div
+                            className={`category-item ${activeIndex === index ? 'active' : ''}`}
+                            onClick={() => handleClick(index, category.id)}
+                        >
+                            <img
+                                className="img"
+                                src={category.imageUrl}
+                                alt={category.title}
+                                style={{
+                                    height: "10rem",
+                                    width: "17rem",
+                                    objectFit: "cover",
+                                    outline: "none",
+                                    border: "none",
+                                }}
+                            />
+                        </div>
                         <h2 className="category-title">{category.qualification}</h2>
                     </SwiperSlide>
                 ))}

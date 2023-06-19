@@ -106,8 +106,7 @@ public class ReservationService
                               );
     }
 
-    private ReservationGetDTO mapReservationToGetDTO(Reservation reservation)
-    {
+    private ReservationGetDTO mapReservationToGetDTO(Reservation reservation) {
         ReservationGetDTO reservationDTO = new ReservationGetDTO();
         reservationDTO.setId(reservation.getId());
         reservationDTO.setStartTime(reservation
@@ -115,10 +114,11 @@ public class ReservationService
                                             .format(DateTimeFormatter.ofPattern("HH:mm:ss")));
         reservationDTO.setStartDate(reservation.getStartDate());
         reservationDTO.setEndDate(reservation.getEndDate());
-        reservationDTO.setProduct(reservation.getProduct());
-        reservationDTO.setUser(reservation.getUser().getId());
+        reservationDTO.setProductId(reservation.getProduct().getId()); // Here, set only the product ID
+        reservationDTO.setUserId(reservation.getUser().getId());
         return reservationDTO;
     }
+
 
     private List<ReservationGetDTO> mapReservationsToGetDTOs(List<Reservation> reservations)
     {
