@@ -15,7 +15,11 @@ import {
 import {
     isSucess,
     isSucessR
-} from "../../../core/utils/rest/restUtils";
+}                                                                         from "../../../core/utils/rest/restUtils";
+import {
+    Toasts
+}                                                                         from "../../../core/utils/toast/toasts";
+import {useNavigate}                                                      from "react-router";
 
 const validationSchema = yup.object()
     .shape({
@@ -38,6 +42,7 @@ export default function Login() {
         resolver: yupResolver(validationSchema),
     });
 
+    const navigate = useNavigate();
     const { login } = useAuth();
 
     const onSubmit = async (data: any) => {
@@ -45,6 +50,8 @@ export default function Login() {
         try {
             const res = await UserService.Login(data);
             if (res && isSucess(res?.status)) {
+                Toasts.showSucess({text: "Login realizado com sucesso!"})
+                navigate('/home');
                 console.log(data)
                 login(res?.data)
             }

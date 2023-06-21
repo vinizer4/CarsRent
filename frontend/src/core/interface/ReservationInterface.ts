@@ -1,9 +1,9 @@
 
 export interface ReservationInterface {
     endDate: string;
-    id: number;
-    productId: number;
+    id?: number;
+    product: number;
     startDate: string;
     startTime: string;
-    userId: number;
+    user: number;
 }

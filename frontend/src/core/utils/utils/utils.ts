@@ -150,7 +150,9 @@ export const isValidDocument = (docP:string) =>{
 
 export const DateNow = () => new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-export const formatDateSQL = (date:Date) => format(date, 'yyyy-MM-dd')
+export const formatDateSQL = (date:Date) => format(date, 'dd-MM-yyyy')
+
+export const formatDateSQLyyyyMMdd = (date:Date) => format(date, 'yyyy-MM-dd')
 
 export const onLoad = (func: () => void) => {
     const { loading, toggleLoading } = useLoadingContext();
