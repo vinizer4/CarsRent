@@ -80,6 +80,12 @@
             <version>2.13.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.30</version> <!-- use a versão mais recente -->
+        </dependency>
+
         <!-- Token JWT -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>

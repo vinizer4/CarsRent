@@ -1,49 +1,79 @@
-import * as React                                   from "react";
-import {useEffect, useState}                        from "react";
-import AppBar                                       from "@mui/material/AppBar";
-import Box                                          from "@mui/material/Box";
-import Toolbar                                      from "@mui/material/Toolbar";
-import Typography                                   from "@mui/material/Typography";
-import {createTheme}                                from "@mui/material/styles";
-import {Grid, IconButton, TextField, ThemeProvider} from "@mui/material";
-import {colorRed, colorSoftBlack}                   from "../../core/utils/const/consts";
-import FavoriteIcon                                 from "@mui/icons-material/Favorite";
-import ShareIcon                                    from "@mui/icons-material/Share";
-import StarIcon                                     from "@mui/icons-material/Star";
-import StarBorderOutlinedIcon                       from "@mui/icons-material/StarBorderOutlined";
-import PlaceOutlinedIcon                            from "@mui/icons-material/PlaceOutlined";
-import ArrowBackIosOutlinedIcon                     from "@mui/icons-material/ArrowBackIosOutlined";
-import {Link, useLocation, useParams}               from "react-router-dom";
-import {CidadeService}                              from "../../core/service/cidade/CidadeService";
+import * as React                                                  from "react";
+import {useEffect, useState}                                       from "react";
+import AppBar                                                      from "@mui/material/AppBar";
+import Box                                                         from "@mui/material/Box";
+import Toolbar                                                     from "@mui/material/Toolbar";
+import Typography                                                  from "@mui/material/Typography";
+import {createTheme}                                               from "@mui/material/styles";
+import {Button, Grid, IconButton, Paper, TextField, ThemeProvider} from "@mui/material";
+import {
+    colorRed,
+    colorSoftBlack
+}                                                                  from "../../core/utils/const/consts";
+import FavoriteIcon
+                                                                   from "@mui/icons-material/Favorite";
+import ShareIcon                                                   from "@mui/icons-material/Share";
+import StarIcon                                                    from "@mui/icons-material/Star";
+import StarBorderOutlinedIcon
+                                                                   from "@mui/icons-material/StarBorderOutlined";
+import PlaceOutlinedIcon
+                                                                   from "@mui/icons-material/PlaceOutlined";
+import ArrowBackIosOutlinedIcon
+                                                                   from "@mui/icons-material/ArrowBackIosOutlined";
+import {Link, useLocation, useParams}                              from "react-router-dom";
+import {
+    CidadeService
+}                                                                  from "../../core/service/cidade/CidadeService";
 import {
     ProductService
-}                                                   from "../../core/service/product/ProductService";
-import {ImageService}                               from "../../core/service/image/ImageService";
+}                                                                  from "../../core/service/product/ProductService";
+import {
+    ImageService
+}                                                                  from "../../core/service/image/ImageService";
 import PrivacyPolicy
-                                                    from "../../core/components/CompanyPolicy/CompanyPolicy";
-import {isSucess}                                   from "../../core/utils/rest/restUtils";
+                                                                   from "../../core/components/CompanyPolicy/CompanyPolicy";
+import {
+    isSucess
+}                                                                  from "../../core/utils/rest/restUtils";
 import {
     CaracteristicaService
-}                                                   from "../../core/service/caracteristicas/CaracteristicaService";
+}                                                                  from "../../core/service/caracteristicas/CaracteristicaService";
 import {
     CaracteristicaInterface
-}                                                   from "../../core/interface/CaracteristicaInterface";
-import {ProductInterface}                           from "../../core/interface/ProductInterface";
-import {ImageInterface}                             from "../../core/interface/ImageInterface";
-import {CidadeInterface}                            from "../../core/interface/CidadeInterface";
+}                                                                  from "../../core/interface/CaracteristicaInterface";
+import {
+    ProductInterface
+}                                                                  from "../../core/interface/ProductInterface";
+import {
+    ImageInterface
+}                                                                  from "../../core/interface/ImageInterface";
+import {
+    CidadeInterface
+}                                                                  from "../../core/interface/CidadeInterface";
 import {
     ReservationInterface
-}                                                   from "../../core/interface/ReservationInterface";
+}                                                                  from "../../core/interface/ReservationInterface";
 import {
     ReservationService
-}                                                   from "../../core/service/reservation/ReservationService";
-import {DatePicker, LocalizationProvider}           from '@mui/lab';
-import AdapterDateFns                               from '@mui/lab/AdapterDateFns';
+}                                                                  from "../../core/service/reservation/ReservationService";
+import {DatePicker, StaticDatePicker}                              from '@mui/x-date-pickers';
+import {LocalizationProvider}                                      from '@mui/x-date-pickers';
+import {
+    AdapterDateFns
+}                                                                  from '@mui/x-date-pickers/AdapterDateFns';
+import {useNavigate}                                               from "react-router";
+import {
+    useAuth
+}                                                                  from "../../core/context/authContext";
+import {
+    Toasts
+}                                                                  from "../../core/utils/toast/toasts";
 
 const theme = createTheme();
 
 export default function Details() {
 
+    const {user} = useAuth();
     const location = useLocation();
     const {cidadeSelecionadaAux, produtoSelecionado, dataInicial, dataFinal} = location.state || {};
     const [product, setProduct] = useState<ProductInterface>();
@@ -51,9 +81,9 @@ export default function Details() {
     const [cidade, setCidade] = useState<CidadeInterface>(cidadeSelecionadaAux);
     const [caracteristicas, setCaracteristicas] = useState<CaracteristicaInterface[]>([])
     const [reservas, setReservas] = useState<ReservationInterface[]>([]);
-    const [selectedCheckInDate, setSelectedCheckInDate] = useState(new Date());
-    const [selectedCheckOutDate, setSelectedCheckOutDate] = useState(new Date());
-    const [disabledDates, setDisabledDates] = useState<any>()
+    const [selectedCheckInDate, setSelectedCheckInDate] = useState(new Date(dataInicial));
+    const [selectedCheckOutDate, setSelectedCheckOutDate] = useState(new Date(dataFinal));
+    const [disabledDates, setDisabledDates] = useState([]);
 
     console.log(cidadeSelecionadaAux)
     console.log(produtoSelecionado)
@@ -61,9 +91,46 @@ export default function Details() {
     console.log(dataFinal)
 
     const {id} = useParams();
+    const navigate = useNavigate();
+
+    const handleNavigateToReservation = (productId: any) => {
+        if (user === null || user === undefined) {
+            Toasts.showError({text: "Para realizar um reserva é necessário realizar o login!"})
+            navigate('/login');
+        }
+        else {
+            console.log(product);
+            console.log(cidadeSelecionadaAux, produtoSelecionado, dataInicial, dataFinal);
+            navigate(
+                `/reserva/${productId}`, {
+                    state: {
+                        cidade,
+                        product,
+                        image,
+                        selectedCheckInDate,
+                        selectedCheckOutDate,
+                        disabledDates
+                    }
+                });
+        }
+    };
+
+
+    const validateUserToRedirect = (productId: any) => {
+        console.log(user)
+    }
+
+    useEffect(() => {
+        console.log(cidade)
+        console.log(product)
+        console.log(image)
+        console.log('user', user)
+        console.log(selectedCheckInDate)
+        console.log(selectedCheckOutDate)
+    }, [selectedCheckInDate, selectedCheckOutDate])
 
     async function getProductById(id: any) {
-        let produto
+        let produto: ProductInterface
         try {
             const res = await ProductService.GetProductById(id);
             if (res && isSucess(res?.status)) {
@@ -84,7 +151,8 @@ export default function Details() {
             console.log(err);
         }
         finally {
-            getCidadeById(produto.cidadeId)
+            getImageById(produto!.imagensIds[0])
+            getCidadeById(produto!.cidadeId)
             await getReservasByProductId(id)
         }
     }
@@ -99,30 +167,31 @@ export default function Details() {
         }
     }
 
-    async function getReservasByProductId(id: any) {
-        let reservasAux: ReservationInterface[] = []
+    async function getReservasByProductId(id: number) {
+        let reservasAux = [];
         try {
             const res = await ReservationService.GetByProductId(id);
-            setReservas(res?.data);
+            reservasAux = res?.data;
+
+            if (reservasAux.length > 0) {
+                const disabledDatesArray = reservasAux.map((reserva: ReservationInterface) => {
+                    const start = new Date(reserva.startDate);
+                    const end = new Date(reserva.endDate);
+                    const dates = [];
+                    for (let dt = start; dt <= end; dt.setDate(dt.getDate() + 1)) {
+                        dates.push(new Date(dt));
+                    }
+                    return dates;
+                })
+                    .flat();
+
+                console.log("disabled", disabledDatesArray);
+                setDisabledDates(disabledDatesArray);
+
+            }
         }
         catch (err) {
             console.log(err);
-        }
-
-        if (reservasAux.length > 0) {
-            const disabledDates = reservasAux.map((reserva) => {
-                const start = new Date(reserva.startDate);
-                const end = new Date(reserva.endDate);
-                const dates = [];
-                for (let dt = start; dt <= end; dt.setDate(dt.getDate() + 1)) {
-                    dates.push(new Date(dt));
-                }
-                return dates;
-            }).flat();
-
-            console.log(disabledDates)
-            setDisabledDates(disabledDates)
-
         }
     }
 
@@ -138,10 +207,7 @@ export default function Details() {
 
     useEffect(() => {
         getProductById(id);
-        getImageById(id);
     }, []);
-
-
 
 
     return (
@@ -334,32 +400,69 @@ export default function Details() {
                         Datas disponíveis:
                     </Typography>
                     <div style={{display: "flex"}}>
-                        <div
-                            style={{
-                                padding: "1rem",
-                                marginLeft: "1rem",
-                                marginTop: "-1rem",
-                                justifyContent: "left",
-                            }}
-                        >
+                        <div style={{
+                            padding: "1rem",
+                            marginLeft: "1rem",
+                            marginTop: "-1rem",
+                            display: "flex"
+                        }}>
+
                             <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                <DatePicker
-                                    label="Check-In"
-                                    value={selectedCheckInDate}
-                                    onChange={(newValue: any) => setSelectedCheckInDate(newValue)}
-                                    renderInput={(params: any) => <TextField {...params} />}
-                                    // shouldDisableDate={(date: any) => disabledDates.some(
-                                    //     disabledDate => disabledDate.getTime() === date.getTime())}
-                                />
-                                <DatePicker
-                                    label="Check-Out"
-                                    value={selectedCheckOutDate}
-                                    onChange={(newValue: any) => setSelectedCheckOutDate(newValue)}
-                                    renderInput={(params: any) => <TextField {...params} />}
-                                    // shouldDisableDate={(date: any) => disabledDates.some(
-                                    //     disabledDate => disabledDate.getTime() === date.getTime())}
-                                />
+
+                                <div style={{
+                                    marginRight: "5rem",
+                                    textAlign: "center"
+                                }}>
+                                    <h3>Check-in</h3>
+                                    <Paper style={{overflow: 'hidden'}}>
+                                        <StaticDatePicker
+                                            minDate={new Date()}
+                                            displayStaticWrapperAs="desktop"
+                                            orientation="landscape"
+                                            value={selectedCheckInDate}
+                                            onChange={(newValue: any) => setSelectedCheckInDate(newValue)}
+                                            shouldDisableDate={(date) =>
+                                                disabledDates.some(
+                                                    (disabledDate: any) =>
+                                                        disabledDate.getDate() === date.getDate() &&
+                                                        disabledDate.getMonth() === date.getMonth() &&
+                                                        disabledDate.getFullYear() === date.getFullYear()
+                                                )
+                                            }
+                                        />
+                                    </Paper>
+                                </div>
+
+                                <div style={{textAlign: "center"}}>
+                                    <h3>Check-out</h3>
+                                    <Paper style={{overflow: 'hidden'}}>
+                                        <StaticDatePicker
+                                            minDate={selectedCheckInDate ? new Date(selectedCheckInDate) : new Date()}
+                                            displayStaticWrapperAs="desktop"
+                                            orientation="landscape"
+                                            value={selectedCheckOutDate}
+                                            onChange={(newValue: any) => {
+                                                if (selectedCheckInDate && newValue < selectedCheckInDate) {
+                                                    alert("Check-out date cannot be before check-in date.");
+                                                    return;
+                                                }
+                                                setSelectedCheckOutDate(newValue);
+                                            }}
+                                            shouldDisableDate={(date) =>
+                                                disabledDates.some(
+                                                    (disabledDate: any) =>
+                                                        disabledDate.getDate() === date.getDate() &&
+                                                        disabledDate.getMonth() === date.getMonth() &&
+                                                        disabledDate.getFullYear() === date.getFullYear()
+                                                )
+                                            }
+                                        />
+                                    </Paper>
+                                </div>
+
                             </LocalizationProvider>
+
+
                         </div>
                         <div>
                             <div
@@ -378,47 +481,48 @@ export default function Details() {
                                     Adicione as datas da sua reserva para obter informações
                                     precisas.
                                 </Typography>
-                                <Link to={`/reserva/${product?.id}`}>
-                                    <button
-                                        style={{
-                                            backgroundColor: colorRed,
-                                            color: "white",
-                                            border: "none",
-                                            padding: "0.5rem",
-                                            width: "15rem",
-                                            borderRadius: "10px",
-                                            marginTop: "1rem",
-                                        }}
-                                    >
-                                        Iniciar Reserva
-                                    </button>
-                                </Link>
+                                <button
+                                    style={{
+                                        backgroundColor: colorRed,
+                                        color: "white",
+                                        border: "none",
+                                        padding: "0.5rem",
+                                        width: "15rem",
+                                        borderRadius: "10px",
+                                        marginTop: "1rem",
+                                    }}
+                                    onClick={() => {
+                                        handleNavigateToReservation(product?.id)
+                                    }}
+                                >
+                                    Iniciar Reserva
+                                </button>
                             </div>
                         </div>
                         <div style={{backgroundColor: "rgb(243, 243, 243)"}}></div>
                     </div>
                 </div>
 
-                <div>
-                    <Typography
-                        text-align="center"
-                        justify-content="center"
-                        margin="2rem"
-                        variant="h4"
-                        component="div"
-                        sx={{flexGrow: 1}}
-                    >
-                        Onde você vai estar?
-                    </Typography>
+                {/*<div>*/}
+                {/*    <Typography*/}
+                {/*        text-align="center"*/}
+                {/*        justify-content="center"*/}
+                {/*        margin="2rem"*/}
+                {/*        variant="h4"*/}
+                {/*        component="div"*/}
+                {/*        sx={{flexGrow: 1}}*/}
+                {/*    >*/}
+                {/*        Onde você vai estar?*/}
+                {/*    </Typography>*/}
 
-                    <div style={{display: "flex", justifyContent: "center"}}>
-                        <img
-                            style={{width: "95%"}}
-                            src="\src\core\assets\mapa.png"
-                            alt=""
-                        />
-                    </div>
-                </div>
+                {/*    <div style={{display: "flex", justifyContent: "center"}}>*/}
+                {/*        <img*/}
+                {/*            style={{width: "95%"}}*/}
+                {/*            src="\src\core\assets\mapa.png"*/}
+                {/*            alt=""*/}
+                {/*        />*/}
+                {/*    </div>*/}
+                {/*</div>*/}
 
                 <div>
                     <Typography

@@ -5,13 +5,17 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
 
-    @Value("${jwt.secret}")
+    private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
+
+    @Value("ThisIsASecretKeyForJWTThatIsAtLeast32CharactersLong")
     private String jwtSecret;
 
     @Value("${jwt.expiration}")
@@ -25,7 +29,7 @@ public class JwtTokenProvider {
                    .setSubject(username)
                    .setIssuedAt(now)
                    .setExpiration(expiryDate)
-                   .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                   .signWith(SignatureAlgorithm.HS256, jwtSecret)
                    .compact();
     }
 
@@ -43,7 +47,7 @@ public class JwtTokenProvider {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;
         } catch (Exception ex) {
-            // Log the exception
+            logger.error("Error validating JWT token: {}", ex.getMessage(), ex);
         }
         return false;
     }
