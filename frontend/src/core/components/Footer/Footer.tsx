@@ -2,14 +2,18 @@ import { Box, IconButton, Link, Typography } from "@mui/material";
 import { styled, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { colorRed, colorSoftBlack } from "../../utils/const/consts";
-// @ts-ignore
+/* // @ts-ignore
 import facebookImg from "../../assets/images/facebook.png";
 // @ts-ignore
 import linkedinImg from "../../assets/images/linkedin.png";
 // @ts-ignore
 import twitterImg from "../../assets/images/twitter.png";
 // @ts-ignore
-import instagramImg from "../../assets/images/instagram.png";
+import instagramImg from "../../assets/images/instagram.png"; */
+import FacebookIcon from '@mui/icons-material/Facebook';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import InstagramIcon from '@mui/icons-material/Instagram';
 
 const StyledFooter = styled('footer')(({ theme }) => ({
     backgroundColor: colorSoftBlack,
@@ -38,11 +42,15 @@ function Footer() {
                         alignItems: "center",
                     }}
                 >
-                    @2023 Digital House - Grupo 03
+                    @2023   - <span style={{marginLeft: '0.5rem'}}>A<span style={{color: "#EF4649"}}>DH</span>ERENCE</span>
                 </Typography>
             </Box>
             <Box>
-                <IconButton href="#" color="inherit">
+            <FacebookIcon width={isMobile ? 10 : 24} height={isMobile ? 15 : 24} fontSize="large" style={{color: 'white'}} ></FacebookIcon>
+            <LinkedInIcon width={isMobile ? 10 : 24} height={isMobile ? 15 : 24} fontSize="large" style={{color: 'white'}}></LinkedInIcon>
+            <TwitterIcon width={isMobile ? 10 : 24} height={isMobile ? 15 : 24} fontSize="large" style={{color: 'white'}}></TwitterIcon>
+            <InstagramIcon width={isMobile ? 10 : 24} height={isMobile ? 15 : 24} fontSize="large" style={{color: 'white'}}></InstagramIcon>
+                {/* <IconButton href="#" color="inherit">
                     <img
                         src={facebookImg}
                         width={isMobile ? 10 : 24}
@@ -73,7 +81,7 @@ function Footer() {
                         height={isMobile ? 15 : 24}
                         alt="Instagram"
                     />
-                </IconButton>
+                </IconButton> */}
             </Box>
         </StyledFooter>
     );

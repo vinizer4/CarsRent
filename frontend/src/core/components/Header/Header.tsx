@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useAuth } from '../../../core/context/authContext'; // Caminho para o useAuth hook
 import { colorRed, colorSoftBlack } from '../../utils/const/consts';
+import styles from './Header.module.css'
 
 function Header() {
     const navigate = useNavigate();
@@ -39,6 +40,7 @@ function Header() {
 
     const handleLogout = () => {
         logout();
+        navigate('/')
         handlePopoverClose();
     };
 
@@ -57,22 +59,22 @@ function Header() {
                         sx={{ width: '5rem', height: '10%', marginRight: '1rem', marginLeft: '1rem' }}
                         onClick={() => navigate('/home')}
                     >
-                        <img style={{ width: '7rem' }} alt="Logo" src="../../src/core/assets/images/logo.png" />
+                        <img style={{ width: '9rem' }} alt="Logo" src="https://dh-grupo03.s3.sa-east-1.amazonaws.com/logo/Adherence+-+Logo.png" />
                     </IconButton>
                     {!isMobile && (
                         <Typography
                             variant="h5"
                             sx={{
                                 flexGrow: 1,
-                                fontSize: '1.5rem',
+                                fontSize: '1.2rem',
                                 transition: 'font-size 0.3s',
                                 marginRight: '2rem',
-                                marginLeft: '1rem',
+                                marginLeft: '2rem',
                                 cursor: 'pointer',
                             }}
                             onClick={() => navigate('/home')}
                         >
-                            Alugue um carro e viaje <span style={{ color: colorRed }}>sem parar</span>
+                            Alugue um carro e viaje <span style={{ color: colorRed }}>sem parar.</span>
                         </Typography>
                     )}
                     {isMobile ? (
@@ -96,6 +98,7 @@ function Header() {
                             ) : (
                                 <>
                                     <Button
+                                        className={styles.button}
                                         color="inherit"
                                         component={Link}
                                         to="/login"
@@ -109,6 +112,7 @@ function Header() {
                                         Iniciar Sessão
                                     </Button>
                                     <Button
+                                        className={styles.button2}
                                         color="inherit"
                                         component={Link}
                                         to="/register"

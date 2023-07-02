@@ -68,9 +68,9 @@ export class UserService {
         }
     }
 
-    static async Post(data: IUserCreate) {
+    static async Register(data: IUserCreate) {
         try {
-            const res = await api.post(`users/`)
+            const res = await api.post(`users/`, data)
             return res
         }
         catch (error: any) {
