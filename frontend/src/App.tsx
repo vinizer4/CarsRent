@@ -13,7 +13,8 @@ import Reserva          from './pages/reserva/Reserva';
 import {AuthProvider}   from "./core/context/authContext";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-
+import Administracao from './pages/Administracao/Administracao';
+import ConfirmacaoReserva from './pages/confirmacaoReserva/confirmacaoReserva';
 
 const theme = createTheme({
     palette: {
@@ -58,6 +59,7 @@ function App() {
                             <Route path={'home'} element={<Home/>}/>
                             <Route path="/detail/:id" element={<Details/>}/>
                             <Route path={'/reserva/:id'} element={<Reserva/>}/>
+                            <Route path={'administracao'} element={<Administracao/>}/>
                         </Routes>
                     </div>
                 </Box>

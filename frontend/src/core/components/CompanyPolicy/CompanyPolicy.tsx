@@ -35,7 +35,6 @@ export default function CompanyPolicy(){
     setOpen3(false);
   };
   
-
   const modalStyle: React.CSSProperties = {
     position: 'fixed',
     top: '50%',
@@ -44,14 +43,37 @@ export default function CompanyPolicy(){
     maxWidth: 700,
     width: '90%',
     height: '50%',
+    maxHeight: '80vh', // Define a altura máxima para 80% da altura da janela
     backgroundColor: '#fff',
     borderRadius: 8,
     boxShadow: '0px 3px 5px rgba(0, 0, 0, 0.2)',
-    padding: 16
+    padding: 16,
+    overflow: 'auto', // Habilita a rolagem vertical quando necessário
   };
-
+  
     return(
         <>
+        <div>
+          <Typography
+            text-align="center"
+            justify-content="center"
+            margin="2rem"
+            variant="h4"
+            component="div"
+            sx={{ flexGrow: 1 }}
+          >
+            O que você precisa saber:
+          </Typography>
+          <div
+            style={{
+              backgroundColor: colorRed,
+              width: "100%",
+              height: "0.15rem",
+              marginTop: "-2rem",
+              marginBottom: "1rem",
+            }}
+          ></div>
+        </div>
         <footer style={{padding: '20px'}}>
     <div
     className={styles.container}

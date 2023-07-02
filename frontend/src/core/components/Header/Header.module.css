@@ -1,0 +1,13 @@
+.button{
+    border: none;
+}
+
+.button:hover{
+    color:white;
+    border-color: none;
+}
+
+.button2:hover{
+    color:#EF4649;
+}
+
