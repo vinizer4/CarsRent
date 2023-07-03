@@ -1,4 +1,4 @@
-package com.digitalhouse.carsrent.service;
+package com.digitalhouse.carsrent.service.imagem;
 
 import com.digitalhouse.carsrent.model.Image;
 import com.digitalhouse.carsrent.repository.ImageRepository;

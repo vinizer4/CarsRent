@@ -2,6 +2,7 @@ package com.digitalhouse.carsrent.service;
 
 import com.digitalhouse.carsrent.model.Image;
 import com.digitalhouse.carsrent.repository.ImageRepository;
+import com.digitalhouse.carsrent.service.imagem.ImageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
