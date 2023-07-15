@@ -3,7 +3,7 @@ package com.digitalhouse.carsrent.rest.controller;
 import com.digitalhouse.carsrent.model.Image;
 import com.digitalhouse.carsrent.model.Product;
 import com.digitalhouse.carsrent.rest.dto.image.ImageDTO;
-import com.digitalhouse.carsrent.service.ImageService;
+import com.digitalhouse.carsrent.service.imagem.ImageService;
 import com.digitalhouse.carsrent.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
